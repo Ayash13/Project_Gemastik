@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "5306417515",
+    "project_id": "gemastik-407fd",
+    "storage_bucket": "gemastik-407fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:5306417515:android:d8b3c23401c043ac44cc2e",
+        "android_client_info": {
+          "package_name": "com.example.project_gemastik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "5306417515-c5quth4n1ikpgj84ma9m6s2liqrt1n82.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.project_gemastik",
+            "certificate_hash": "3d4db635fc392956ab6740916c6bfb332b8c02fa"
+          }
+        },
+        {
+          "client_id": "5306417515-vvo6fm0cpf48vg6c8i4pi18qv0qn0cc7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDv646dySHNEB_hDPklW3kZq0w9GEGEkCM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "5306417515-vvo6fm0cpf48vg6c8i4pi18qv0qn0cc7.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "5306417515-ddn2c3rcbamvl3snt08v0em2vr7pldk3.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.projectGemastik.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
