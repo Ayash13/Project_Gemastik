@@ -63,6 +63,12 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    aaptOptions {
+        noCompress 'tflite'
+        noCompress 'lite'
+        noCompress "assets/data/model_unquant.tflite"
+    }
 }
 
 flutter {

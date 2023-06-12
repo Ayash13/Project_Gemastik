@@ -532,7 +532,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    icon: const Icon(
+                    icon: Icon(
                       MdiIcons.arrowLeft,
                       color: Colors.black,
                     ),

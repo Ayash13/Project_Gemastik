@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project_gemastik/discover.dart';
@@ -8,9 +9,12 @@ import 'package:project_gemastik/favoritepage.dart';
 import 'package:project_gemastik/feedspage.dart';
 import 'package:project_gemastik/profilepage.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import 'classifier/widget/image_recogniser.dart';
 
+class HomePage extends StatefulWidget {
+  const HomePage({
+    super.key,
+  });
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -26,23 +30,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offAll(const DiscoverPage());
-    Get.snackbar(
-      'Success',
-      'LogOut Success',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Color.fromARGB(240, 126, 186, 148),
-      colorText: Colors.white,
-      duration: Duration(seconds: 3),
-      margin: EdgeInsets.all(10),
-      borderRadius: 10,
-      borderColor: Colors.black,
-      borderWidth: 1.5,
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +37,7 @@ class _HomePageState extends State<HomePage> {
         controller: _pageController,
         onPageChanged: onItemSelected,
         children: [
-          homePageLayout(context),
+          HomePageLayout(),
           FeedsPage(),
           favoritePage(),
         ],
@@ -170,8 +157,37 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+}
 
-  Container homePageLayout(BuildContext context) {
+class HomePageLayout extends StatefulWidget {
+  const HomePageLayout({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<HomePageLayout> createState() => _HomePageLayoutState();
+}
+
+class _HomePageLayoutState extends State<HomePageLayout> {
+  Future<void> _logout() async {
+    await FirebaseAuth.instance.signOut();
+    Get.offAll(const DiscoverPage());
+    Get.snackbar(
+      'Success',
+      'LogOut Success',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Color.fromARGB(240, 126, 186, 148),
+      colorText: Colors.white,
+      duration: Duration(seconds: 3),
+      margin: EdgeInsets.all(10),
+      borderRadius: 10,
+      borderColor: Colors.black,
+      borderWidth: 1.5,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.height,
@@ -196,7 +212,6 @@ class _HomePageState extends State<HomePage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  //menu
                   GestureDetector(
                     onTap: () {
                       Get.to(
@@ -213,7 +228,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-                  //add content
                   itemAppBar(
                     iconbarColor: Color.fromARGB(160, 126, 186, 148),
                     iconbar: Icon(
@@ -221,7 +235,6 @@ class _HomePageState extends State<HomePage> {
                       color: Colors.black,
                     ),
                   ),
-                  //logut
                   GestureDetector(
                     onTap: () {
                       _logout();
@@ -253,7 +266,6 @@ class _HomePageState extends State<HomePage> {
             ),
             Expanded(
               child: Container(
-                //container 1
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 decoration: BoxDecoration(
@@ -264,6 +276,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   color: Colors.white,
                 ),
+                child: ImageRecogniser(),
               ),
             )
           ],
