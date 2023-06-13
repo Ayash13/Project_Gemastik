@@ -208,10 +208,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding:
+              const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
           child: Container(
             width: MediaQuery.of(context).size.width,
-            height: 400,
+            height: 390,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               color: Color.fromARGB(211, 184, 182, 251),

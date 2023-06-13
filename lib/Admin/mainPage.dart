@@ -1,25 +1,18 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:project_gemastik/discover.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:project_gemastik/bookpage.dart';
-import 'package:project_gemastik/feedspage.dart';
-import 'package:project_gemastik/profilepage.dart';
+import 'package:project_gemastik/Admin/booksPage.dart';
+import 'package:project_gemastik/Admin/marketPlace.dart';
+import 'package:project_gemastik/Admin/trashPickup.dart';
 
-import 'classifier/widget/image_recogniser.dart';
+class AdminMainPage extends StatefulWidget {
+  const AdminMainPage({Key? key}) : super(key: key);
 
-class HomePage extends StatefulWidget {
-  const HomePage({
-    super.key,
-  });
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<AdminMainPage> createState() => _AdminMainPageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _AdminMainPageState extends State<AdminMainPage> {
   int selectedIndex = 0;
   PageController _pageController = PageController(initialPage: 0);
 
@@ -37,9 +30,9 @@ class _HomePageState extends State<HomePage> {
         controller: _pageController,
         onPageChanged: onItemSelected,
         children: [
-          HomePageLayout(),
-          FeedsPage(),
-          BookPage(),
+          TrashPickup(),
+          MarketPlace(),
+          Books(),
         ],
       ),
       bottomNavigationBar: Container(
@@ -157,128 +150,34 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class HomePageLayout extends StatefulWidget {
-  const HomePageLayout({
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  State<HomePageLayout> createState() => _HomePageLayoutState();
-}
-
-class _HomePageLayoutState extends State<HomePageLayout> {
-  Future<void> _logout() async {
-    await FirebaseAuth.instance.signOut();
-    Get.offAll(const DiscoverPage());
-    Get.snackbar(
-      'Success',
-      'LogOut Success',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Color.fromARGB(240, 126, 186, 148),
-      colorText: Colors.white,
-      duration: Duration(seconds: 3),
-      margin: EdgeInsets.all(10),
-      borderRadius: 10,
-      borderColor: Colors.black,
-      borderWidth: 1.5,
-    );
-  }
+class WelcomeWidget extends StatelessWidget {
+  const WelcomeWidget({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height,
-      decoration: const BoxDecoration(
-        color: Color.fromARGB(212, 206, 205, 241),
-      ),
-      child: Padding(
-        padding:
-            const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
-        child: Column(
-          children: [
-            Container(
-              height: 60,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(130, 255, 255, 255),
-                border: Border.all(
-                  width: 1.5,
-                  color: Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(
-                        ProfilePage(),
-                        transition: Transition.leftToRight,
-                        duration: Duration(milliseconds: 300),
-                      );
-                    },
-                    child: itemAppBar(
-                      iconbarColor: Color.fromARGB(160, 255, 219, 153),
-                      iconbar: Icon(
-                        Icons.person_2_outlined,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                  itemAppBar(
-                    iconbarColor: Color.fromARGB(160, 126, 186, 148),
-                    iconbar: Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.black,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      _logout();
-                    },
-                    child: itemAppBar(
-                      iconbarColor: Color.fromARGB(160, 249, 135, 127),
-                      iconbar: Icon(
-                        Icons.logout_outlined,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return Expanded(
+      child: Container(
+        height: 40,
+        width: MediaQuery.of(context).size.width,
+        decoration: BoxDecoration(
+          color: Color.fromARGB(176, 126, 186, 148),
+          border: Border.all(
+            width: 1.5,
+            color: Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            'Welcome Admin',
+            style: GoogleFonts.poppins(
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              color: const Color.fromARGB(255, 20, 20, 20),
             ),
-            const SizedBox(
-              height: 40,
-            ),
-            Text(
-              'Hi, ${FirebaseAuth.instance.currentUser?.displayName ?? ""}',
-              style: GoogleFonts.poppins(
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 20, 20, 20),
-              ),
-            ),
-            const SizedBox(
-              height: 40,
-            ),
-            Expanded(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.black,
-                  ),
-                  color: Colors.white,
-                ),
-                child: ImageRecogniser(),
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

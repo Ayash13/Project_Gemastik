@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image/image.dart' as img;
 import 'package:image_picker/image_picker.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import '../classifier.dart';
 import 'image_photo_view.dart';
@@ -130,8 +129,19 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(40),
+          side: BorderSide(width: 1.5, color: Colors.black),
+        ),
+        backgroundColor: Color.fromARGB(255, 255, 251, 235),
         title: Center(
-          child: const Text('Choose Method'),
+          child: const Text(
+            'Choose Method',
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,

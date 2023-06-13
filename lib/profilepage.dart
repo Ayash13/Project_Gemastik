@@ -514,31 +514,41 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
         child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 20),
-              child: AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                leading: Container(
-                  decoration: BoxDecoration(
-                    color: Color.fromARGB(212, 206, 205, 241),
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      width: 1.5,
-                      color: Colors.black,
+            Row(
+              children: [
+                SizedBox(
+                  width: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 30),
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(212, 206, 205, 241),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      MdiIcons.arrowLeft,
-                      color: Colors.black,
+                    child: Center(
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.arrow_back,
+                          size: 30,
+                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
+            ),
+            SizedBox(
+              height: 10,
             ),
             Container(
               height: 300,
@@ -560,14 +570,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 1.5,
                       color: Colors.black,
                     ),
-                    color: Colors.transparent,
+                    color: Colors.white,
                   ),
-                  child: CircleAvatar(
-                    radius: 0.375 *
-                        300, // Adjust this value to set the radius based on the height of the inner container
-                    backgroundImage: NetworkImage(
-                        FirebaseAuth.instance.currentUser?.photoURL ?? ""),
-                  ),
+                  child: FirebaseAuth.instance.currentUser?.photoURL != null
+                      ? CircleAvatar(
+                          radius: 0.375 * 300,
+                          backgroundImage: NetworkImage(
+                              FirebaseAuth.instance.currentUser!.photoURL!),
+                        )
+                      : Icon(
+                          Icons.person_rounded,
+                          size: 100,
+                          color: Colors.black,
+                        ),
                 ),
               ),
             ),
