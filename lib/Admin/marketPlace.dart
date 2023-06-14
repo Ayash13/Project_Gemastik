@@ -570,49 +570,74 @@ class _MarketPlaceState extends State<MarketPlace> {
                               borderRadius: BorderRadius.circular(10),
                               color: Color.fromARGB(255, 194, 225, 251),
                             ),
-                            child: ListTile(
-                              title: Text(
-                                title,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color.fromARGB(255, 20, 20, 20),
-                                ),
-                              ),
-                              subtitle: Text(
-                                description,
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color.fromARGB(255, 20, 20, 20),
-                                ),
-                              ),
-                              trailing: Text(
-                                '\Rp ${price.toStringAsFixed(0)}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color.fromARGB(255, 20, 20, 20),
-                                ),
-                              ),
-                              leading: imageUrls.isNotEmpty
-                                  ? Container(
-                                      clipBehavior: Clip.antiAliasWithSaveLayer,
-                                      width: 70,
-                                      height: 70,
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: 100,
                                       decoration: BoxDecoration(
-                                        border: Border.all(
-                                            width: 1.5, color: Colors.black),
                                         borderRadius: BorderRadius.circular(10),
+                                        color: Colors.white,
+                                        border: Border.all(
+                                          width: 1.5,
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                      child: Image.network(
-                                        imageUrls[0],
-                                        fit: BoxFit.cover,
-                                        width: 70,
-                                        height: 70,
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(10),
+                                        child: Image.network(
+                                          imageUrls[0],
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
-                                    )
-                                  : Icon(Icons.image),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  flex: 2,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        title,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        description,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      ),
+                                      SizedBox(height: 5),
+                                      Text(
+                                        'Rp ${price.toStringAsFixed(0)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),

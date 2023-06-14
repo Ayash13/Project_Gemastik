@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/src/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:project_gemastik/homepage.dart';
 
@@ -20,15 +21,31 @@ class _FeedsPageState extends State<FeedsPage> {
     ),
   );
   final TextEditingController _searchController = TextEditingController();
+  String searchQuery = '';
 
-  String selectedOption = 'Sort By';
+  String selectedOption = 'All Product';
   List<String> dropdownOptions = [
-    'Sort By',
+    'All Product',
     'Plastic',
     'Paper',
     'Metal',
   ];
+  List<DocumentSnapshot> sortProducts(
+      List<DocumentSnapshot> products, String sortOption) {
+    if (sortOption == 'All Product') {
+      return List.from(products);
+    } else if (sortOption == 'Plastic') {
+      return products.where((doc) => doc['category'] == 'Plastic').toList();
+    } else if (sortOption == 'Paper') {
+      return products.where((doc) => doc['category'] == 'Paper').toList();
+    } else if (sortOption == 'Metal') {
+      return products.where((doc) => doc['category'] == 'Metal').toList();
+    }
 
+    return List.from(products);
+  }
+
+  List<DocumentSnapshot>? sortedProducts;
   @override
   void dispose() {
     _searchController.dispose();
@@ -44,75 +61,83 @@ class _FeedsPageState extends State<FeedsPage> {
         decoration: const BoxDecoration(
           color: Color.fromARGB(193, 255, 248, 235),
         ),
-        child: Padding(
-          padding:
-              const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
-          child: Column(
-            children: [
-              Container(
-                height: 60,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(130, 255, 255, 255),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.black,
-                  ),
-                  borderRadius: BorderRadius.circular(10),
+        child: Column(
+          children: [
+            Container(
+              margin: const EdgeInsets.only(top: 30, left: 20, right: 20),
+              height: 60,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(130, 255, 255, 255),
+                border: Border.all(
+                  width: 1.5,
+                  color: Colors.black,
                 ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Color.fromARGB(255, 251, 231, 194),
-                          border: Border.all(
-                            width: 1.5,
-                            color: Colors.black,
-                          ),
-                          borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(255, 251, 231, 194),
+                        border: Border.all(
+                          width: 1.5,
+                          color: Colors.black,
                         ),
-                        //searchbar
-                        child: Padding(
-                          padding: const EdgeInsets.only(left: 20, right: 20),
-                          child: TextField(
-                            controller: _searchController,
-                            textAlign: TextAlign.start,
-                            decoration: InputDecoration(
-                              hintText: 'Search',
-                              hintStyle: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                height: 1.3,
-                              ),
-                              border: InputBorder.none,
-                              suffixIcon: Icon(MdiIcons.magnify),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      //searchbar
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: TextField(
+                          controller: _searchController,
+                          onChanged: (value) {
+                            setState(() {
+                              searchQuery = value;
+                            });
+                          },
+                          textAlign: TextAlign.start,
+                          decoration: InputDecoration(
+                            hintText: 'Search',
+                            hintStyle: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              height: 1.3,
                             ),
+                            border: InputBorder.none,
+                            suffixIcon: Icon(MdiIcons.magnify),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    //cart
-                    appBarInstance,
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    width: 10,
+                  ),
+                  //cart
+                  appBarInstance,
+                  SizedBox(
+                    width: 10,
+                  ),
+                ],
               ),
-              SizedBox(
-                height: 10,
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Padding(
+              padding: const EdgeInsets.only(
+                left: 20,
+                right: 20,
               ),
-              Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
@@ -136,26 +161,40 @@ class _FeedsPageState extends State<FeedsPage> {
                   )
                 ],
               ),
-              SizedBox(
-                height: 10,
-              ),
-              Expanded(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance
-                      .collection('products')
-                      .snapshots(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final products = snapshot.data!.docs;
-                      final productChunks = chunkList(
-                          products, 2); // Split products into chunks of 2
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Expanded(
+              child: StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance
+                    .collection('products')
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final products = snapshot.data!.docs;
 
-                      return ListView.builder(
-                        padding: EdgeInsets.only(top: 0),
-                        physics: AlwaysScrollableScrollPhysics(),
-                        itemCount: productChunks.length,
-                        itemBuilder: (context, index) {
-                          return Column(
+                    // Filter products based on search query
+                    final filteredProducts = products.where((doc) {
+                      final data = doc.data() as Map<String, dynamic>;
+                      final productName =
+                          data['title'].toString().toLowerCase();
+                      return productName.contains(searchQuery.toLowerCase());
+                    }).toList();
+
+                    sortedProducts =
+                        sortProducts(filteredProducts, selectedOption);
+                    final productChunks = chunkList(sortedProducts!, 2.1);
+                    // Use sorted products
+
+                    return ListView.builder(
+                      padding: EdgeInsets.only(top: 0),
+                      physics: AlwaysScrollableScrollPhysics(),
+                      itemCount: productChunks.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          child: Column(
                             children: [
                               Row(
                                 mainAxisAlignment:
@@ -167,30 +206,36 @@ class _FeedsPageState extends State<FeedsPage> {
                                       document['images'] ?? [];
 
                                   return Expanded(
-                                    child: ProductContainer(
-                                      productName: data['title'],
-                                      description: data['description'],
-                                      price: data['price'],
-                                      imageUrls: imageUrls,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 5,
+                                        right: 5,
+                                      ),
+                                      child: ProductContainer(
+                                        productName: data['title'],
+                                        description: data['description'],
+                                        price: data['price'],
+                                        imageUrls: imageUrls,
+                                      ),
                                     ),
                                   );
                                 }).toList(),
                               ),
                               SizedBox(height: 10), // Add gap between rows
                             ],
-                          );
-                        },
-                      );
-                    } else if (snapshot.hasError) {
-                      return Text('Error: ${snapshot.error}');
-                    } else {
-                      return CircularProgressIndicator();
-                    }
-                  },
-                ),
+                          ),
+                        );
+                      },
+                    );
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                },
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -251,7 +296,6 @@ class ProductContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         color: Color.fromARGB(255, 194, 225, 251),
         border: Border.all(
@@ -267,7 +311,7 @@ class ProductContainer extends StatelessWidget {
             SizedBox(height: 10),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 180,
+              height: 150,
               decoration: BoxDecoration(
                 color: Colors.white,
                 border: Border.all(
@@ -285,27 +329,39 @@ class ProductContainer extends StatelessWidget {
               ),
             ),
             SizedBox(height: 10),
-            Text(
-              productName,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Container(
+              alignment: Alignment.topLeft,
+              child: Text(
+                productName,
+                style: GoogleFonts.poppins(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: const Color.fromARGB(255, 20, 20, 20),
+                ),
+                textAlign: TextAlign.left,
+              ),
+            ),
+            Container(
+              alignment: Alignment.topLeft,
+              child: Text(
+                description,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.poppins(
+                  fontSize: 15,
+                  color: const Color.fromARGB(255, 20, 20, 20),
+                ),
               ),
             ),
             SizedBox(height: 10),
-            Text(
-              description,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              '\Rp ${price.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
+            Container(
+              alignment: Alignment.topLeft,
+              child: Text(
+                '\Rp ${price.toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             SizedBox(height: 10),
