@@ -21,6 +21,8 @@ class _MarketPlaceState extends State<MarketPlace> {
   final TextEditingController _ProductNameController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
+  final TextEditingController _qtyController = TextEditingController();
+  final TextEditingController _weightController = TextEditingController();
   String _selectedCategory = '';
   List<String> _documentIds = [];
   List<File> _selectedImages = [];
@@ -107,6 +109,8 @@ class _MarketPlaceState extends State<MarketPlace> {
         'price': price,
         'category': _selectedCategory,
         'images': imageUrls,
+        'qty': _qtyController,
+        'weight': _weightController,
       });
 
       // Show a success message or navigate to a different screen
@@ -198,86 +202,28 @@ class _MarketPlaceState extends State<MarketPlace> {
                             ),
                           ),
                           SizedBox(height: 16),
-                          TextFormField(
-                            decoration: _inputDecoration.copyWith(
-                              labelText: 'Product Name',
-                            ),
-                            style: _textStyle,
-                            onChanged: (value) {
-                              setState(() {
-                                _ProductNameController.text = value;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            decoration: _inputDecoration.copyWith(
-                              labelText: 'Description',
-                            ),
-                            style: _textStyle,
-                            onChanged: (value) {
-                              setState(() {
-                                _descriptionController.text = value;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          TextFormField(
-                            decoration: _inputDecoration.copyWith(
-                              labelText: 'Price',
-                            ),
-                            style: _textStyle,
-                            keyboardType: TextInputType.number,
-                            onChanged: (value) {
-                              setState(() {
-                                _priceController.text = value;
-                              });
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          DropdownButtonFormField<String>(
-                            items: [
-                              DropdownMenuItem(
-                                child: Text('Plastic'),
-                                value: 'Plastic',
-                              ),
-                              DropdownMenuItem(
-                                child: Text('Paper'),
-                                value: 'Paper',
-                              ),
-                              DropdownMenuItem(
-                                child: Text('Metal'),
-                                value: 'Metal',
-                              ),
-                            ],
-                            decoration: _inputDecoration.copyWith(
-                              labelText: 'Category',
-                            ),
-                            style: _textStyle,
-                            onChanged: (value) {
-                              setState(() {
-                                _selectedCategory = value!;
-                              });
-                            },
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
                           // there is no image
                           if (_selectedImages.isEmpty)
-                            Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: MediaQuery.of(context).size.width,
-                              height: 200,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Colors.white,
-                                border:
-                                    Border.all(width: 1.5, color: Colors.black),
-                              ),
-                              child: Icon(
-                                Icons.photo,
-                                size: 80,
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _selectImages();
+                                });
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(top: 10),
+                                width: MediaQuery.of(context).size.width,
+                                height: 200,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(15),
+                                  color: Colors.white,
+                                  border: Border.all(
+                                      width: 1.5, color: Colors.black),
+                                ),
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  size: 80,
+                                ),
                               ),
                             ) // else there is an image
                           else
@@ -315,32 +261,111 @@ class _MarketPlaceState extends State<MarketPlace> {
                                 );
                               }).toList(),
                             ),
-                          SizedBox(
-                            height: 10,
+                          SizedBox(height: 16),
+                          TextFormField(
+                            decoration: _inputDecoration.copyWith(
+                              labelText: 'Product Name',
+                            ),
+                            style: _textStyle,
+                            onChanged: (value) {
+                              setState(() {
+                                _ProductNameController.text = value;
+                              });
+                            },
                           ),
-                          GestureDetector(
-                            onTap: _selectImages,
-                            child: Container(
-                              margin: EdgeInsets.only(top: 10),
-                              width: MediaQuery.of(context).size.width,
-                              height: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(15),
-                                color: Color.fromARGB(255, 255, 219, 153),
-                                border:
-                                    Border.all(width: 1.5, color: Colors.black),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Select Image Product',
-                                  style: GoogleFonts.rubik(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
+                          SizedBox(height: 16),
+                          TextFormField(
+                            decoration: _inputDecoration.copyWith(
+                              labelText: 'Description',
+                            ),
+                            style: _textStyle,
+                            onChanged: (value) {
+                              setState(() {
+                                _descriptionController.text = value;
+                              });
+                            },
+                          ),
+                          SizedBox(height: 16),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: _inputDecoration.copyWith(
+                                    labelText: 'Price',
                                   ),
+                                  style: _textStyle,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _priceController.text = value;
+                                    });
+                                  },
                                 ),
                               ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: _inputDecoration.copyWith(
+                                    labelText: 'Quantity',
+                                  ),
+                                  style: _textStyle,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _qtyController.text = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Expanded(
+                                child: TextFormField(
+                                  decoration: _inputDecoration.copyWith(
+                                    labelText: 'Weight',
+                                  ),
+                                  style: _textStyle,
+                                  keyboardType: TextInputType.number,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _weightController.text = value;
+                                    });
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 16),
+                          DropdownButtonFormField<String>(
+                            items: [
+                              DropdownMenuItem(
+                                child: Text('Plastic'),
+                                value: 'Plastic',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Paper'),
+                                value: 'Paper',
+                              ),
+                              DropdownMenuItem(
+                                child: Text('Metal'),
+                                value: 'Metal',
+                              ),
+                            ],
+                            decoration: _inputDecoration.copyWith(
+                              labelText: 'Category',
                             ),
+                            style: _textStyle,
+                            onChanged: (value) {
+                              setState(() {
+                                _selectedCategory = value!;
+                              });
+                            },
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           GestureDetector(
                             onTap: () {
@@ -410,6 +435,7 @@ class _MarketPlaceState extends State<MarketPlace> {
         return AlertDialog(
           title: Text('Delete Product'),
           content: Text('Are you sure you want to delete this product?'),
+          backgroundColor: Color.fromARGB(255, 255, 251, 235),
           actions: [
             Container(
               decoration: BoxDecoration(

@@ -1,7 +1,10 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
-import 'package:image/image.dart';
+import 'package:flutter/material.dart';
+import 'package:image/image.dart' as img;
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:project_gemastik/classifier/widget/customBottomSheet.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
 import 'package:tflite_flutter_helper/tflite_flutter_helper.dart';
 
@@ -79,10 +82,10 @@ class Classifier {
     _model.interpreter.close();
   }
 
-  ClassifierCategory predict(Image image) {
+  ClassifierCategory predict(img.Image image, BuildContext context) {
     debugPrint(
       'Image: ${image.width}x${image.height}, '
-      'size: ${image.length} bytes',
+      'size: ${image.getBytes().length} bytes',
     );
 
     // Load the image and convert it to TensorImage for TensorFlow Input
@@ -110,6 +113,13 @@ class Classifier {
 
     debugPrint('Top category: $topResult');
 
+    // Show modal based on the classification result
+    if (topResult.label == 'Recycleable') {
+      _showRecycleableModal(context);
+    } else if (topResult.label == 'Non-Recycleable') {
+      _showNonRecycleableModal(context);
+    }
+
     return topResult;
   }
 
@@ -131,7 +141,7 @@ class Classifier {
     return categoryList;
   }
 
-  TensorImage _preProcessInput(Image image) {
+  TensorImage _preProcessInput(img.Image image) {
     // #1
     final inputTensor = TensorImage(_model.inputType);
     inputTensor.loadImage(image);
@@ -158,5 +168,43 @@ class Classifier {
 
     // #6
     return inputTensor;
+  }
+
+  void _showRecycleableModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(
+          title: 'Recyclable',
+          content: Column(
+            children: [
+              Text('Recyclable content'),
+              // Add more widgets as needed
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showNonRecycleableModal(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return CustomBottomSheet(
+          title: 'Non-Recyclable',
+          content: Column(
+            children: [
+              Text('Non-Recyclable content'),
+              // Add more widgets as needed
+            ],
+          ),
+        );
+      },
+    );
   }
 }

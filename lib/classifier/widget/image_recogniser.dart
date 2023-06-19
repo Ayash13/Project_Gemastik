@@ -188,7 +188,7 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
 
     final imageInput = img.decodeImage(image.readAsBytesSync())!;
 
-    final resultCategory = await _classifier.predict(imageInput);
+    final resultCategory = await _classifier.predict(imageInput, context);
 
     final result = resultCategory.score >= 0.8
         ? _ResultStatus.found

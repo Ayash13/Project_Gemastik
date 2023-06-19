@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dropdown_button2/src/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:project_gemastik/cartPage.dart';
 import 'package:project_gemastik/homepage.dart';
+import 'package:project_gemastik/productPage.dart';
 
 class FeedsPage extends StatefulWidget {
   const FeedsPage({Key? key}) : super(key: key);
@@ -122,7 +125,12 @@ class _FeedsPageState extends State<FeedsPage> {
                     width: 10,
                   ),
                   //cart
-                  appBarInstance,
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(CartPage());
+                    },
+                    child: appBarInstance,
+                  ),
                   SizedBox(
                     width: 10,
                   ),
@@ -205,6 +213,8 @@ class _FeedsPageState extends State<FeedsPage> {
                                   final List<dynamic> imageUrls =
                                       document['images'] ?? [];
 
+                                  final productId = document.id;
+
                                   return Expanded(
                                     child: Padding(
                                       padding: const EdgeInsets.only(
@@ -212,6 +222,7 @@ class _FeedsPageState extends State<FeedsPage> {
                                         right: 5,
                                       ),
                                       child: ProductContainer(
+                                        productId: productId,
                                         productName: data['title'],
                                         description: data['description'],
                                         price: data['price'],
@@ -283,6 +294,7 @@ class ProductContainer extends StatelessWidget {
   final String productName;
   final String description;
   final double price;
+  final String productId;
   final List<dynamic> imageUrls;
 
   ProductContainer({
@@ -291,84 +303,96 @@ class ProductContainer extends StatelessWidget {
     required this.description,
     required this.price,
     required this.imageUrls,
+    required this.productId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Color.fromARGB(255, 194, 225, 251),
-        border: Border.all(
-          width: 1.5,
-          color: Colors.black,
-        ),
-        borderRadius: BorderRadius.circular(15),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10, right: 10),
-        child: Column(
-          children: [
-            SizedBox(height: 10),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 150,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(
-                  width: 1.5,
-                  color: Colors.black,
-                ),
-                borderRadius: BorderRadius.circular(15),
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.network(
-                  imageUrls[0],
-                  fit: BoxFit.cover,
-                ),
-              ),
+    return GestureDetector(
+        onTap: () {
+          // Navigate to the product page when tapped
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ProductPage(
+                  productId: productId), // Pass the product ID or other details
             ),
-            SizedBox(height: 10),
-            Container(
-              alignment: Alignment.topLeft,
-              child: Text(
-                productName,
-                style: GoogleFonts.poppins(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                  color: const Color.fromARGB(255, 20, 20, 20),
-                ),
-                textAlign: TextAlign.left,
-              ),
+          );
+        },
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color.fromARGB(255, 194, 225, 251),
+            border: Border.all(
+              width: 1.5,
+              color: Colors.black,
             ),
-            Container(
-              alignment: Alignment.topLeft,
-              child: Text(
-                description,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: GoogleFonts.poppins(
-                  fontSize: 15,
-                  color: const Color.fromARGB(255, 20, 20, 20),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10, right: 10),
+            child: Column(
+              children: [
+                SizedBox(height: 10),
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: 150,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(
+                      width: 1.5,
+                      color: Colors.black,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Image.network(
+                      imageUrls[0],
+                      fit: BoxFit.cover,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Container(
-              alignment: Alignment.topLeft,
-              child: Text(
-                '\Rp ${price.toStringAsFixed(0)}',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+                SizedBox(height: 10),
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    productName,
+                    style: GoogleFonts.poppins(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: const Color.fromARGB(255, 20, 20, 20),
+                    ),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
-              ),
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    description,
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                    style: GoogleFonts.poppins(
+                      fontSize: 15,
+                      color: const Color.fromARGB(255, 20, 20, 20),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    '\Rp ${price.toStringAsFixed(0)}',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                SizedBox(height: 10),
+              ],
             ),
-            SizedBox(height: 10),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
 
