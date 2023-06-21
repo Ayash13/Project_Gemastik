@@ -5,6 +5,9 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
+import 'cartPage.dart';
+import 'checkOutScreen.dart';
+
 class ProductPage extends StatefulWidget {
   final String productId;
 
@@ -17,6 +20,7 @@ class ProductPage extends StatefulWidget {
 class _ProductPageState extends State<ProductPage> {
   bool isFavorited = false;
   bool isAddedToCart = false;
+
   int quantity = 1;
   @override
   void initState() {
@@ -109,12 +113,12 @@ class _ProductPageState extends State<ProductPage> {
       return;
     }
 
-    final cartRef = FirebaseFirestore.instance
+    final favRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .collection('favorite');
 
-    final productDoc = cartRef.doc(widget.productId);
+    final productDoc = favRef.doc(widget.productId);
     final productSnapshot = await productDoc.get();
 
     setState(() {
@@ -129,25 +133,37 @@ class _ProductPageState extends State<ProductPage> {
       return;
     }
 
-    final cartRef = FirebaseFirestore.instance
+    final favRef = FirebaseFirestore.instance
         .collection('users')
         .doc(user.uid)
         .collection('favorite');
 
-    final productDoc = cartRef.doc(widget.productId);
-    final productData = {
-      'productId': widget.productId,
-    };
+    final productDoc = favRef.doc(widget.productId);
 
-    if (isFavorited) {
-      await productDoc.delete();
-    } else {
-      await productDoc.set(productData);
+    final productSnapshot = await FirebaseFirestore.instance
+        .collection('products')
+        .doc(widget.productId)
+        .get();
+
+    if (productSnapshot.exists) {
+      final productData = productSnapshot.data() as Map<String, dynamic>;
+      final productPrice = productData['price'] as double;
+
+      final productDataToAdd = {
+        'productId': widget.productId,
+        'price': productPrice
+      };
+
+      if (isFavorited) {
+        await productDoc.delete();
+      } else {
+        await productDoc.set(productDataToAdd);
+      }
+
+      setState(() {
+        isFavorited = !isFavorited;
+      });
     }
-
-    setState(() {
-      isFavorited = !isFavorited;
-    });
   }
 
   @override
@@ -204,16 +220,21 @@ class _ProductPageState extends State<ProductPage> {
                                 color: const Color.fromARGB(255, 20, 20, 20),
                               ),
                             ),
-                            Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 2, color: Colors.black),
-                                borderRadius: BorderRadius.circular(30),
-                                color: Color.fromARGB(160, 126, 186, 148),
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(CartPage());
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Color.fromARGB(160, 126, 186, 148),
+                                ),
+                                child: Icon(MdiIcons.cartOutline),
                               ),
-                              child: Icon(MdiIcons.cartOutline),
                             ),
                           ],
                         ),
@@ -434,6 +455,7 @@ class _ProductPageState extends State<ProductPage> {
                   Positioned(
                     top: 120,
                     left: 65,
+                    right: 65,
                     child: Container(
                       margin: EdgeInsets.only(left: 20, right: 20, bottom: 20),
                       width: 220,
@@ -557,26 +579,39 @@ class _ProductPageState extends State<ProductPage> {
                             SizedBox(
                               height: 10,
                             ),
-                            Container(
-                              margin: EdgeInsets.only(
-                                left: 12,
-                                right: 12,
-                              ),
-                              height: 50,
-                              width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 2, color: Colors.black),
-                                borderRadius: BorderRadius.circular(30),
-                                color: Color.fromARGB(255, 255, 140, 140),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Buy Now',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black,
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => CheckoutScreen(
+                                      productId: widget.productId,
+                                      quantity: quantity,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                margin: EdgeInsets.only(
+                                  left: 12,
+                                  right: 12,
+                                ),
+                                height: 50,
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(30),
+                                  color: Color.fromARGB(255, 255, 140, 140),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    'Buy Now',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                 ),
                               ),

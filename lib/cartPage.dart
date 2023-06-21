@@ -52,6 +52,7 @@ class _CartItemListState extends State<CartItemList> {
             appBar: AppBar(
               backgroundColor: Colors.transparent,
               elevation: 0,
+              scrolledUnderElevation: 0,
               leadingWidth: 75,
               leading: GestureDetector(
                 onTap: () {
@@ -59,8 +60,8 @@ class _CartItemListState extends State<CartItemList> {
                 },
                 child: Container(
                   margin: EdgeInsets.only(left: 20),
-                  height: 50,
-                  width: 50,
+                  height: 40,
+                  width: 40,
                   decoration: BoxDecoration(
                     border: Border.all(width: 2, color: Colors.black),
                     borderRadius: BorderRadius.circular(30),
@@ -87,11 +88,11 @@ class _CartItemListState extends State<CartItemList> {
             ),
           );
         }
-
         return Scaffold(
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
+            scrolledUnderElevation: 0,
             leadingWidth: 75,
             leading: GestureDetector(
               onTap: () {
@@ -99,8 +100,8 @@ class _CartItemListState extends State<CartItemList> {
               },
               child: Container(
                 margin: EdgeInsets.only(left: 20),
-                height: 50,
-                width: 50,
+                height: 40,
+                width: 40,
                 decoration: BoxDecoration(
                   border: Border.all(width: 2, color: Colors.black),
                   borderRadius: BorderRadius.circular(30),
@@ -145,7 +146,7 @@ class _CartItemListState extends State<CartItemList> {
             },
           ),
           bottomNavigationBar: Container(
-            height: 150,
+            height: 200,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.only(
@@ -169,7 +170,7 @@ class _CartItemListState extends State<CartItemList> {
                       ),
                       Spacer(),
                       Text(
-                        '\$${totalAmount.toStringAsFixed(2)}',
+                        '\Rp ${totalAmount.toStringAsFixed(0)}',
                         style: GoogleFonts.poppins(
                           fontSize: 25,
                           fontWeight: FontWeight.w600,
@@ -178,7 +179,39 @@ class _CartItemListState extends State<CartItemList> {
                       ),
                     ],
                   ),
-                )
+                ),
+                Expanded(
+                  child: Container(
+                    height: MediaQuery.of(context).size.height * 0.5,
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1.5, color: Colors.black),
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(35),
+                      ),
+                      color: Color.fromARGB(255, 105, 175, 233),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 1.5, color: Colors.black),
+                          borderRadius: BorderRadius.circular(35),
+                          color: Color.fromARGB(255, 233, 167, 105),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Checkout',
+                            style: GoogleFonts.poppins(
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: const Color.fromARGB(255, 20, 20, 20),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -187,31 +220,13 @@ class _CartItemListState extends State<CartItemList> {
     );
   }
 
-  void removeFromCart(String productId) async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      // User not logged in, handle accordingly
-      return;
-    }
-
-    final cartRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(user.uid)
-        .collection('cart');
-
-    final productDoc = cartRef.doc(productId);
-    await productDoc.delete();
-  }
-
   void incrementQuantity(String productId) {
-    setState(() {
-      final cartItems = FirebaseFirestore.instance
-          .collection('users')
-          .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
-          .collection('cart');
-      final cartItem = cartItems.doc(productId);
-      cartItem.update({'quantity': FieldValue.increment(1)});
-    });
+    final cartItems = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+        .collection('cart');
+    final cartItem = cartItems.doc(productId);
+    cartItem.update({'quantity': FieldValue.increment(1)});
   }
 
   void decrementQuantity(String productId) {
@@ -220,14 +235,16 @@ class _CartItemListState extends State<CartItemList> {
         .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
         .collection('cart');
     final cartItem = cartItems.doc(productId);
+    cartItem.update({'quantity': FieldValue.increment(-1)});
+  }
 
-    cartItem.get().then((snapshot) {
-      final currentQuantity = snapshot.get('quantity') ?? 0;
-
-      if (currentQuantity > 0) {
-        cartItem.update({'quantity': FieldValue.increment(-1)});
-      }
-    });
+  void removeFromCart(String productId) {
+    final cartItems = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+        .collection('cart');
+    final cartItem = cartItems.doc(productId);
+    cartItem.delete();
   }
 }
 

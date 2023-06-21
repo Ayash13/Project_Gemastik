@@ -8,6 +8,8 @@ import 'package:project_gemastik/cartPage.dart';
 import 'package:project_gemastik/homepage.dart';
 import 'package:project_gemastik/productPage.dart';
 
+import 'favoritePage.dart';
+
 class FeedsPage extends StatefulWidget {
   const FeedsPage({Key? key}) : super(key: key);
 
@@ -16,10 +18,17 @@ class FeedsPage extends StatefulWidget {
 }
 
 class _FeedsPageState extends State<FeedsPage> {
-  itemAppBar appBarInstance = itemAppBar(
+  itemAppBar cartIcon = itemAppBar(
     iconbarColor: Color.fromARGB(160, 126, 186, 148),
     iconbar: Icon(
       MdiIcons.cartOutline,
+      color: Colors.black,
+    ),
+  );
+  itemAppBar favIcon = itemAppBar(
+    iconbarColor: Color.fromARGB(191, 254, 146, 146),
+    iconbar: Icon(
+      MdiIcons.heartOutline,
       color: Colors.black,
     ),
   );
@@ -124,13 +133,23 @@ class _FeedsPageState extends State<FeedsPage> {
                   SizedBox(
                     width: 10,
                   ),
+                  GestureDetector(
+                    child: favIcon,
+                    onTap: () {
+                      Get.to(FavoritePage());
+                    },
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
                   //cart
                   GestureDetector(
                     onTap: () {
                       Get.to(CartPage());
                     },
-                    child: appBarInstance,
+                    child: cartIcon,
                   ),
+
                   SizedBox(
                     width: 10,
                   ),

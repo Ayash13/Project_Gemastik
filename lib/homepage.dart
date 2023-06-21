@@ -54,7 +54,8 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(
             left: 20,
             right: 20,
-            bottom: 15,
+            bottom: 10,
+            top: 10,
           ),
           child: Container(
             height: 60,
@@ -194,7 +195,7 @@ class _HomePageLayoutState extends State<HomePageLayout> {
       ),
       child: Padding(
         padding:
-            const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 20),
+            const EdgeInsets.only(top: 30, left: 20, right: 20, bottom: 10),
         child: Column(
           children: [
             Container(
@@ -250,7 +251,7 @@ class _HomePageLayoutState extends State<HomePageLayout> {
               ),
             ),
             const SizedBox(
-              height: 40,
+              height: 30,
             ),
             Text(
               'Hi, ${FirebaseAuth.instance.currentUser?.displayName ?? ""}',
@@ -261,7 +262,7 @@ class _HomePageLayoutState extends State<HomePageLayout> {
               ),
             ),
             const SizedBox(
-              height: 40,
+              height: 30,
             ),
             Expanded(
               child: Container(

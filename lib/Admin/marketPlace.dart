@@ -435,6 +435,10 @@ class _MarketPlaceState extends State<MarketPlace> {
         return AlertDialog(
           title: Text('Delete Product'),
           content: Text('Are you sure you want to delete this product?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(40),
+            side: BorderSide(width: 1.5, color: Colors.black),
+          ),
           backgroundColor: Color.fromARGB(255, 255, 251, 235),
           actions: [
             Container(
