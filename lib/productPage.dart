@@ -222,7 +222,7 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Get.to(CartPage());
+                                Get.off(CartPage());
                               },
                               child: Container(
                                 height: 50,

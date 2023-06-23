@@ -6,23 +6,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project_gemastik/cartPage.dart';
 
-class CheckoutScreen extends StatefulWidget {
-  final String productId;
-  late final int quantity;
-
-  CheckoutScreen({
-    required this.productId,
-    required this.quantity,
+class CheckoutCartScreen extends StatefulWidget {
+  final List<Map<String, dynamic>> cartItems;
+  CheckoutCartScreen({
+    super.key,
+    required this.cartItems,
   });
 
   @override
-  _CheckoutScreenState createState() => _CheckoutScreenState();
+  _CheckoutCartScreenState createState() => _CheckoutCartScreenState();
 }
 
-class _CheckoutScreenState extends State<CheckoutScreen> {
-  final List<Map<String, dynamic>> cartItems = Get.arguments ?? [];
-  int _quantity = 1;
-  double totalAmount = 0.0;
+class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
+  int quantity = 1;
   Map<String, dynamic>? userAddresses;
   String? phoneNumber;
   @override
@@ -30,7 +26,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     super.initState();
     fetchAddresses();
     fetchPhoneNumber();
-    _quantity = widget.quantity;
+    calculateTotalAmount();
   }
 
   Future<void> fetchAddresses() async {
@@ -214,6 +210,27 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
     }
   }
 
+  double totalAmount = 0.0;
+
+  void calculateTotalAmount() {
+    final cartItems = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+        .collection('cart');
+
+    cartItems.get().then((snapshot) {
+      double calculatedTotalAmount = 0.0;
+      for (var doc in snapshot.docs) {
+        final quantity = doc.data()?['quantity'] ?? 0;
+        final productPrice = doc.data()?['price'] ?? 0.0;
+        calculatedTotalAmount += (quantity * productPrice);
+      }
+      setState(() {
+        totalAmount = calculatedTotalAmount;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -252,58 +269,84 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           SizedBox(width: 40),
         ],
       ),
-      body: FutureBuilder<DocumentSnapshot>(
-        future: FirebaseFirestore.instance
-            .collection('products')
-            .doc(widget.productId)
-            .get(),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(child: Text('Error loading product'));
-          }
-
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
-          }
-
-          final productData = snapshot.data?.data() as Map<String, dynamic>?;
-          final productName = productData?['title'] ?? 'Product';
-          final productDescription = productData?['description'] ?? '';
-          final productImages = productData?['images'] ?? [];
-          final productImage = productImages.isNotEmpty ? productImages[0] : '';
-          final productPrice = productData?['price'] ?? 0.0;
-          totalAmount += (_quantity * productPrice);
-
-          return Padding(
-            padding: const EdgeInsets.only(top: 100),
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                border: Border.all(width: 2, color: Colors.black),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(30),
-                  topRight: Radius.circular(30),
+      body: Stack(
+        children: [
+          Positioned(
+            child: Padding(
+              padding: const EdgeInsets.only(top: 100),
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                  border: Border.all(width: 2, color: Colors.black),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
+                  ),
+                  color: Color.fromARGB(255, 255, 240, 212),
                 ),
-                color: Color.fromARGB(255, 255, 240, 212),
               ),
-              child: Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
+            ),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                margin: EdgeInsets.only(top: 20),
+                height: MediaQuery.of(context).size.height * 0.4,
+                child: ListView.builder(
+                  itemCount: widget.cartItems.length,
+                  itemBuilder: (context, index) {
+                    final cartItem = widget.cartItems[index];
+                    final productId = cartItem['productId'] ?? '';
+                    final quantity = cartItem['quantity'] ?? 0;
+                    final productPrice = cartItem['price'] ?? 0.0;
+
+                    // Retrieve product details from Firestore based on the productId
+                    final productRef = FirebaseFirestore.instance
+                        .collection('products')
+                        .doc(productId);
+
+                    return FutureBuilder<DocumentSnapshot>(
+                      future: productRef.get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasData) {
+                          final productData =
+                              snapshot.data!.data() as Map<String, dynamic>? ??
+                                  {};
+                          final productName =
+                              productData['title'] as String? ?? '';
+                          final productImages =
+                              productData['images'] as List<dynamic>? ?? [];
+                          final productDescription =
+                              productData['description'] as String? ?? '';
+
+                          // Select the first image URL from the list (you can adjust this logic based on your requirements)
+                          final productImageURL = productImages.isNotEmpty
+                              ? productImages[0] as String
+                              : '';
+
+                          return ProductItemTile(
+                            productId: productId,
+                            quantity: quantity,
+                            productPrice: productPrice,
+                          );
+                        }
+
+                        if (snapshot.hasError) {
+                          return Text('Error retrieving product');
+                        }
+
+                        return Center(child: CircularProgressIndicator());
+                      },
+                    );
+                  },
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.47,
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(left: 3, right: 3),
-                      height: 160,
-                      child: ProductItemTile(
-                        productId: widget.productId,
-                        quantity: _quantity,
-                        productPrice: productPrice,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
                     Row(
                       children: List.generate(
                         155 ~/ 5,
@@ -317,209 +360,214 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.37,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          side: BorderSide(
-                            color: Colors.black,
-                            width: 2,
-                          ),
-                        ),
-                        elevation: 0,
-                        color: Colors.white,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: Column(
-                          children: [
-                            SizedBox(
-                              height: 10,
+                    Expanded(
+                      child: Container(
+                        height: MediaQuery.of(context).size.height,
+                        width: MediaQuery.of(context).size.width,
+                        margin: EdgeInsets.all(20),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(
+                              color: Colors.black,
+                              width: 2,
                             ),
-                            //order summary
-                            Padding(
-                              padding: const EdgeInsets.only(
-                                  top: 10, left: 20, right: 20),
-                              child: Column(
-                                children: [
-                                  Center(
-                                    child: Text(
-                                      'Customers Data',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
+                          ),
+                          elevation: 0,
+                          color: Colors.white,
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: 10,
+                              ),
+                              //order summary
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    top: 10, left: 20, right: 20),
+                                child: Column(
+                                  children: [
+                                    Center(
+                                      child: Text(
+                                        'Customers Data',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    height: 20,
-                                  ),
-                                  //email
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Email :',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    //email
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Email :',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        FirebaseAuth
-                                                .instance.currentUser?.email ??
-                                            '',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
+                                        SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  //phone
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Phone :',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
+                                        Text(
+                                          FirebaseAuth.instance.currentUser
+                                                  ?.email ??
+                                              '',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      Text(
-                                        '${phoneNumber}',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
+                                      ],
+                                    ),
+                                    //phone
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Phone :',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  //address
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Address :',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
+                                        SizedBox(
+                                          width: 10,
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 10,
-                                      ),
-                                      if (userAddresses != null &&
-                                          userAddresses!.isNotEmpty)
-                                        GestureDetector(
-                                          onTap: () {
-                                            showAddress();
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10, vertical: 5),
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                width: 1.5,
-                                                color: Colors.black,
+                                        Text(
+                                          '${phoneNumber}',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w400,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    //address
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Address :',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 10,
+                                        ),
+                                        if (userAddresses != null &&
+                                            userAddresses!.isNotEmpty)
+                                          GestureDetector(
+                                            onTap: () {
+                                              showAddress();
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1.5,
+                                                  color: Colors.black,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Text(
-                                              '${userAddresses!.values.first['title']}',
-                                              style: GoogleFonts.poppins(
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w400,
-                                                color: const Color.fromARGB(
-                                                    255, 20, 20, 20),
+                                              child: Text(
+                                                '${userAddresses!.values.first['title']}',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Row(
-                              children: List.generate(
-                                155 ~/ 5,
-                                (index) => Expanded(
-                                  child: Container(
-                                    color: index % 2 == 0
-                                        ? Colors.transparent
-                                        : Colors.black,
-                                    height: 2,
-                                  ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                height: MediaQuery.of(context).size.height,
-                                width: MediaQuery.of(context).size.width,
-                                color: Color.fromARGB(255, 140, 203, 255),
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 10, bottom: 10, left: 30, right: 30),
-                                  child: Center(
-                                    child: Text(
-                                      'Rp${(totalAmount.toStringAsFixed(0))}',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
-                                      ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Row(
+                                children: List.generate(
+                                  155 ~/ 5,
+                                  (index) => Expanded(
+                                    child: Container(
+                                      color: index % 2 == 0
+                                          ? Colors.transparent
+                                          : Colors.black,
+                                      height: 2,
                                     ),
                                   ),
                                 ),
                               ),
-                            )
-                          ],
+                              Expanded(
+                                child: Container(
+                                  height: MediaQuery.of(context).size.height,
+                                  width: MediaQuery.of(context).size.width,
+                                  color: Color.fromARGB(255, 140, 203, 255),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        top: 10,
+                                        bottom: 10,
+                                        left: 30,
+                                        right: 30),
+                                    child: Center(
+                                      child: Text(
+                                        '\Rp ${totalAmount.toStringAsFixed(0)}',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 30,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 3,
-                    ),
                     //confirm
                     Container(
-                      margin: EdgeInsets.only(left: 3, right: 3),
+                      margin: EdgeInsets.only(
+                        bottom: 20,
+                        left: 23,
+                        right: 23,
+                      ),
                       width: MediaQuery.of(context).size.width,
                       height: 50,
                       decoration: BoxDecoration(
@@ -538,15 +586,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: 5,
-                    ),
                   ],
                 ),
               ),
-            ),
-          );
-        },
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -593,7 +638,10 @@ class ProductItemTile extends StatelessWidget {
 
         return Container(
           margin: EdgeInsets.only(
-            top: 20,
+            left: 40,
+            right: 40,
+            top: 10,
+            bottom: 10,
           ),
           decoration: BoxDecoration(
             border: Border.all(width: 2, color: Colors.black),
@@ -619,7 +667,6 @@ class ProductItemTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10),
                     Text(
                       productName,
                       style: GoogleFonts.roboto(
@@ -627,6 +674,7 @@ class ProductItemTile extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    SizedBox(height: 15),
                     Padding(
                       padding: const EdgeInsets.only(right: 30),
                       child: Text(

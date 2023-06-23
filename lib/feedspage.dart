@@ -377,7 +377,7 @@ class ProductContainer extends StatelessWidget {
                   child: Text(
                     productName,
                     style: GoogleFonts.poppins(
-                      fontSize: 20,
+                      fontSize: 18,
                       fontWeight: FontWeight.w600,
                       color: const Color.fromARGB(255, 20, 20, 20),
                     ),

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dotted_border/dotted_border.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -739,216 +738,131 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 20,
             ),
-            Container(
-              height: 200,
-              width: MediaQuery.of(context).size.width,
-              margin: EdgeInsets.only(
-                left: 20,
-                right: 20,
-              ),
-              child: Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  side: BorderSide(
-                    color: Colors.black,
-                    width: 2,
-                  ),
+            Expanded(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                margin: EdgeInsets.only(
+                  left: 20,
+                  right: 20,
                 ),
-                elevation: 0,
-                color: Colors.white,
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    side: BorderSide(
+                      color: Colors.black,
+                      width: 2,
                     ),
-                    Text(
-                      'Your Point',
-                      style: GoogleFonts.poppins(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromARGB(255, 20, 20, 20),
+                  ),
+                  elevation: 0,
+                  color: Colors.white,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
                       ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Text(
-                      '1000',
-                      style: GoogleFonts.poppins(
-                        fontSize: 40,
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromARGB(255, 20, 20, 20),
+                      Text(
+                        'Your Point',
+                        style: GoogleFonts.poppins(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: const Color.fromARGB(255, 20, 20, 20),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Row(
-                      children: List.generate(
-                        155 ~/ 5,
-                        (index) => Expanded(
-                          child: Container(
-                            color: index % 2 == 0
-                                ? Colors.transparent
-                                : Colors.black,
-                            height: 2,
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Text(
+                        '1000',
+                        style: GoogleFonts.poppins(
+                          fontSize: 40,
+                          fontWeight: FontWeight.w600,
+                          color: const Color.fromARGB(255, 20, 20, 20),
+                        ),
+                      ),
+                      SizedBox(
+                        height: 15,
+                      ),
+                      Row(
+                        children: List.generate(
+                          155 ~/ 5,
+                          (index) => Expanded(
+                            child: Container(
+                              color: index % 2 == 0
+                                  ? Colors.transparent
+                                  : Colors.black,
+                              height: 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    Expanded(
-                      child: Container(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        color: Color.fromARGB(255, 140, 203, 255),
-                        child: Padding(
-                          padding: const EdgeInsets.only(
-                              top: 10, bottom: 10, left: 30, right: 30),
-                          child: Container(
-                            height: 50,
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(width: 1.5, color: Colors.black),
-                              borderRadius: BorderRadius.circular(30),
-                              color: Colors.white,
-                            ),
-                            child: Center(
-                              child: Text(
-                                'Withdraw',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color.fromARGB(255, 20, 20, 20),
+                      Expanded(
+                        child: Container(
+                          height: MediaQuery.of(context).size.height,
+                          width: MediaQuery.of(context).size.width,
+                          color: Color.fromARGB(255, 140, 203, 255),
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                top: 10, bottom: 10, left: 30, right: 30),
+                            child: Container(
+                              height: 50,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 1.5, color: Colors.black),
+                                borderRadius: BorderRadius.circular(30),
+                                color: Colors.white,
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Withdraw',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        const Color.fromARGB(255, 20, 20, 20),
+                                  ),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                    )
-                  ],
+                      )
+                    ],
+                  ),
                 ),
               ),
             ),
             SizedBox(
               height: 20,
             ),
-            Expanded(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Colors.black),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                  ),
-                  color: Color.fromARGB(155, 255, 232, 188),
+            Container(
+              height: 195,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                border: Border.all(width: 2, color: Colors.black),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(40),
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.only(
-                    left: 20,
-                    right: 20,
-                    top: 20,
-                  ),
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          if (phoneNumber != null) {
-                            _showDialogPhoneUpdate();
-                          } else {
-                            _showDialogAddPhone();
-                          }
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 2, color: Colors.black),
-                            borderRadius: BorderRadius.circular(20),
-                            color: Colors.white,
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(179, 252, 119, 42),
-                                  ),
-                                  child: Icon(
-                                    MdiIcons.phone,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Container(
-                                  height: 40,
-                                  width: 2,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Phone Number',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
-                                      ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      phoneNumber != null
-                                          ? '$phoneNumber'
-                                          : 'Please add phone number',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Container(
+                color: Color.fromARGB(155, 255, 232, 188),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.only(
+                  left: 20,
+                  right: 20,
+                  top: 20,
+                ),
+                child: Column(
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        if (phoneNumber != null) {
+                          _showDialogPhoneUpdate();
+                        } else {
+                          _showDialogAddPhone();
+                        }
+                      },
+                      child: Container(
                         width: MediaQuery.of(context).size.width,
                         decoration: BoxDecoration(
                           border: Border.all(width: 2, color: Colors.black),
@@ -971,7 +885,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   color: Color.fromARGB(179, 252, 119, 42),
                                 ),
                                 child: Icon(
-                                  Icons.home,
+                                  MdiIcons.phone,
                                   color: Colors.black,
                                 ),
                               ),
@@ -986,7 +900,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Address',
+                                    'Phone Number',
                                     style: GoogleFonts.poppins(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,
@@ -995,72 +909,33 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   SizedBox(height: 5),
-                                  userAddresses != null &&
-                                          userAddresses!.isNotEmpty
-                                      ? Text(
-                                          userAddresses!
-                                                  .values.first?['title'] ??
-                                              'Please add address',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color.fromARGB(
-                                                255, 20, 20, 20),
-                                          ),
-                                        )
-                                      : Text(
-                                          'Please add address',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w400,
-                                            color: const Color.fromARGB(
-                                                255, 20, 20, 20),
-                                          ),
-                                        )
+                                  Text(
+                                    phoneNumber != null
+                                        ? '$phoneNumber'
+                                        : 'Please add phone number',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
                                 ],
                               ),
                               Spacer(),
-                              GestureDetector(
-                                onTap: () {
-                                  _showDialogAddAddress();
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
+                              Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1.5,
                                     color: Colors.black,
                                   ),
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  showAddress();
-                                },
-                                child: Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Icon(
-                                    Icons.arrow_forward_ios_rounded,
-                                    color: Colors.black,
-                                  ),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: Colors.black,
                                 ),
                               ),
                               SizedBox(
@@ -1069,9 +944,133 @@ class _ProfilePageState extends State<ProfilePage> {
                             ],
                           ),
                         ),
-                      )
-                    ],
-                  ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 15,
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: Colors.black),
+                        borderRadius: BorderRadius.circular(20),
+                        color: Colors.white,
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Row(
+                          children: [
+                            Container(
+                              height: 40,
+                              width: 40,
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  width: 1.5,
+                                  color: Colors.black,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                color: Color.fromARGB(179, 252, 119, 42),
+                              ),
+                              child: Icon(
+                                Icons.home,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(width: 10),
+                            Container(
+                              height: 40,
+                              width: 2,
+                              color: Colors.black,
+                            ),
+                            SizedBox(width: 10),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Address',
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        const Color.fromARGB(255, 20, 20, 20),
+                                  ),
+                                ),
+                                SizedBox(height: 5),
+                                userAddresses != null &&
+                                        userAddresses!.isNotEmpty
+                                    ? Text(
+                                        userAddresses!.values.first?['title'] ??
+                                            'Please add address',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      )
+                                    : Text(
+                                        'Please add address',
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      )
+                              ],
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                _showDialogAddAddress();
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1.5,
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Icon(
+                                  Icons.add,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                showAddress();
+                              },
+                              child: Container(
+                                height: 40,
+                                width: 40,
+                                decoration: BoxDecoration(
+                                  border: Border.all(
+                                    width: 1.5,
+                                    color: Colors.black,
+                                  ),
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Icon(
+                                  Icons.arrow_forward_ios_rounded,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
                 ),
               ),
             ),

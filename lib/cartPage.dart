@@ -1,8 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:project_gemastik/checkOutCartScreen.dart';
 
 class CartPage extends StatelessWidget {
   @override
@@ -19,6 +21,31 @@ class CartItemList extends StatefulWidget {
 }
 
 class _CartItemListState extends State<CartItemList> {
+  @override
+  void initState() {
+    super.initState();
+    calculateTotalAmount();
+  }
+
+  void calculateTotalAmount() {
+    final cartItems = FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
+        .collection('cart');
+
+    cartItems.get().then((snapshot) {
+      double calculatedTotalAmount = 0.0;
+      for (var doc in snapshot.docs) {
+        final quantity = doc.data()?['quantity'] ?? 0;
+        final productPrice = doc.data()?['price'] ?? 0.0;
+        calculatedTotalAmount += (quantity * productPrice);
+      }
+      setState(() {
+        totalAmount = calculatedTotalAmount;
+      });
+    });
+  }
+
   double totalAmount = 0.0;
 
   @override
@@ -45,7 +72,10 @@ class _CartItemListState extends State<CartItemList> {
           return Center(child: CircularProgressIndicator());
         }
 
-        final cartItems = snapshot.data?.docs ?? [];
+        final cartItems = snapshot.data?.docs
+                .map((doc) => doc.data() as Map<String, dynamic>)
+                .toList() ??
+            [];
 
         if (cartItems.isEmpty) {
           return Scaffold(
@@ -140,7 +170,9 @@ class _CartItemListState extends State<CartItemList> {
                 decrementQuantity: () => decrementQuantity(productId),
               );
 
-              totalAmount += (quantity * productPrice ?? 0.0);
+              void totalPrice() {
+                totalAmount += (quantity * productPrice ?? 0.0);
+              }
 
               return cartItemTile;
             },
@@ -181,30 +213,41 @@ class _CartItemListState extends State<CartItemList> {
                   ),
                 ),
                 Expanded(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * 0.5,
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1.5, color: Colors.black),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(35),
-                      ),
-                      color: Color.fromARGB(255, 105, 175, 233),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 1.5, color: Colors.black),
-                          borderRadius: BorderRadius.circular(35),
-                          color: Color.fromARGB(255, 233, 167, 105),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              CheckoutCartScreen(cartItems: cartItems),
                         ),
-                        child: Center(
-                          child: Text(
-                            'Checkout',
-                            style: GoogleFonts.poppins(
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              color: const Color.fromARGB(255, 20, 20, 20),
+                      );
+                    },
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1.5, color: Colors.black),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(35),
+                        ),
+                        color: Color.fromARGB(255, 105, 175, 233),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1.5, color: Colors.black),
+                            borderRadius: BorderRadius.circular(35),
+                            color: Color.fromARGB(255, 233, 167, 105),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Checkout',
+                              style: GoogleFonts.poppins(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w600,
+                                color: const Color.fromARGB(255, 20, 20, 20),
+                              ),
                             ),
                           ),
                         ),
@@ -227,6 +270,9 @@ class _CartItemListState extends State<CartItemList> {
         .collection('cart');
     final cartItem = cartItems.doc(productId);
     cartItem.update({'quantity': FieldValue.increment(1)});
+    setState(() {
+      calculateTotalAmount();
+    });
   }
 
   void decrementQuantity(String productId) {
@@ -235,7 +281,18 @@ class _CartItemListState extends State<CartItemList> {
         .doc(FirebaseAuth.instance.currentUser?.uid ?? '')
         .collection('cart');
     final cartItem = cartItems.doc(productId);
-    cartItem.update({'quantity': FieldValue.increment(-1)});
+
+    cartItem.get().then((snapshot) {
+      if (snapshot.exists) {
+        final int currentQuantity = snapshot.data()?['quantity'] ?? 0;
+        if (currentQuantity > 1) {
+          cartItem.update({'quantity': FieldValue.increment(-1)});
+        }
+      }
+    });
+    setState(() {
+      calculateTotalAmount();
+    });
   }
 
   void removeFromCart(String productId) {
@@ -293,11 +350,7 @@ class CartItemTile extends StatelessWidget {
         final productPrice = productData?['price'] ?? 0.0;
 
         return Container(
-          margin: EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
-          ),
+          margin: EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
           decoration: BoxDecoration(
             border: Border.all(width: 2, color: Colors.black),
             borderRadius: BorderRadius.circular(20),
