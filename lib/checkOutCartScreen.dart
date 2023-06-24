@@ -4,7 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:project_gemastik/cartPage.dart';
+import 'package:project_gemastik/profilepage.dart';
+import 'package:slide_to_act/slide_to_act.dart';
 
 class CheckoutCartScreen extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
@@ -19,6 +20,7 @@ class CheckoutCartScreen extends StatefulWidget {
 
 class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
   int quantity = 1;
+  String selectedPaymentMethod = 'Credit Card';
   Map<String, dynamic>? userAddresses;
   String? phoneNumber;
   @override
@@ -27,6 +29,21 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
     fetchAddresses();
     fetchPhoneNumber();
     calculateTotalAmount();
+  }
+
+// Create a list of available payment methods
+  List<String> paymentMethods = [
+    'Credit Card',
+    'Debit Card',
+    'PayPal',
+    'Bank Transfer',
+  ];
+
+// Create a function to handle the selection of a payment method
+  void selectPaymentMethod(String method) {
+    setState(() {
+      selectedPaymentMethod = method;
+    });
   }
 
   Future<void> fetchAddresses() async {
@@ -407,7 +424,7 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          'Email :',
+                                          'Name :',
                                           style: GoogleFonts.poppins(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w600,
@@ -420,8 +437,8 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                         ),
                                         Text(
                                           FirebaseAuth.instance.currentUser
-                                                  ?.email ??
-                                              '',
+                                                  ?.displayName ??
+                                              "",
                                           style: GoogleFonts.poppins(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w400,
@@ -509,6 +526,33 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                                 ),
                                               ),
                                             ),
+                                          )
+                                        else
+                                          GestureDetector(
+                                            onTap: () {
+                                              Get.off(ProfilePage());
+                                            },
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 10, vertical: 5),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1.5,
+                                                  color: Colors.black,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                              child: Text(
+                                                'Set your address first',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                       ],
                                     ),
@@ -562,26 +606,359 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                       ),
                     ),
                     //confirm
-                    Container(
-                      margin: EdgeInsets.only(
-                        bottom: 20,
-                        left: 23,
-                        right: 23,
-                      ),
-                      width: MediaQuery.of(context).size.width,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(15),
-                        color: Color.fromARGB(255, 140, 203, 255),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Confirm',
-                          style: GoogleFonts.poppins(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: const Color.fromARGB(255, 20, 20, 20),
+                    GestureDetector(
+                      onTap: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (context) => Padding(
+                            padding: EdgeInsets.only(
+                                bottom:
+                                    MediaQuery.of(context).viewInsets.bottom),
+                            child: Container(
+                              height: 500,
+                              decoration: BoxDecoration(
+                                color: Color.fromARGB(255, 235, 246, 255),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(40),
+                                  topRight: Radius.circular(40),
+                                ),
+                                border:
+                                    Border.all(width: 2, color: Colors.black),
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(20),
+                                child: ListView(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.all(15),
+                                          height: 5,
+                                          width: 30,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          left: 7, right: 7),
+                                      child: Column(
+                                        children: [
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Product',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          Divider(
+                                            thickness: 1,
+                                            color: Colors.black,
+                                          ),
+
+                                          // Implementing the cart items here
+                                          SizedBox(
+                                            height: 100,
+                                            child: ListView(
+                                              children: [
+                                                Column(
+                                                  children: List.generate(
+                                                      widget.cartItems.length,
+                                                      (index) {
+                                                    final cartItem =
+                                                        widget.cartItems[index];
+                                                    final productId =
+                                                        cartItem['productId'] ??
+                                                            '';
+                                                    final quantity =
+                                                        cartItem['quantity'] ??
+                                                            0;
+                                                    final productPrice =
+                                                        cartItem['price'] ??
+                                                            0.0;
+
+                                                    // Retrieve product details from Firestore based on the productId
+                                                    final productRef =
+                                                        FirebaseFirestore
+                                                            .instance
+                                                            .collection(
+                                                                'products')
+                                                            .doc(productId);
+
+                                                    return FutureBuilder<
+                                                        DocumentSnapshot>(
+                                                      future: productRef.get(),
+                                                      builder:
+                                                          (context, snapshot) {
+                                                        if (snapshot.hasData) {
+                                                          final productData = snapshot
+                                                                      .data!
+                                                                      .data()
+                                                                  as Map<String,
+                                                                      dynamic>? ??
+                                                              {};
+                                                          final productName =
+                                                              productData['title']
+                                                                      as String? ??
+                                                                  '';
+
+                                                          return Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .symmetric(
+                                                                    horizontal:
+                                                                        20,
+                                                                    vertical:
+                                                                        5),
+                                                            child: Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text(
+                                                                  '${productName} :',
+                                                                  style: GoogleFonts
+                                                                      .poppins(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: const Color
+                                                                            .fromARGB(
+                                                                        255,
+                                                                        20,
+                                                                        20,
+                                                                        20),
+                                                                  ),
+                                                                ),
+                                                                Text(
+                                                                  'Rp ${productPrice.toStringAsFixed(0)}',
+                                                                  style: GoogleFonts
+                                                                      .poppins(
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: const Color
+                                                                            .fromARGB(
+                                                                        255,
+                                                                        20,
+                                                                        20,
+                                                                        20),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }
+
+                                                        if (snapshot.hasError) {
+                                                          return Text(
+                                                              'Error retrieving product');
+                                                        }
+
+                                                        return Center(
+                                                            child:
+                                                                CircularProgressIndicator());
+                                                      },
+                                                    );
+                                                  }),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Divider(
+                                            thickness: 1,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Shipping price :',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                              Text(
+                                                'Rp 0',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                'Total price :',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                              Text(
+                                                'Rp ${totalAmount.toStringAsFixed(0)}',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                            height: 20,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    // Payment method dropdown
+                                    Container(
+                                      margin:
+                                          EdgeInsets.symmetric(horizontal: 10),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: DropdownButtonHideUnderline(
+                                        child: DropdownButton<String>(
+                                          value: selectedPaymentMethod,
+                                          hint: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                horizontal: 10),
+                                            child:
+                                                Text('Select Payment Method'),
+                                          ),
+                                          onChanged: (String? method) {
+                                            if (method != null) {
+                                              selectPaymentMethod(method);
+                                            }
+                                          },
+                                          items: paymentMethods
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: Text(value),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 20,
+                                    ),
+                                    SlideAction(
+                                      sliderButtonIcon: Icon(
+                                        MdiIcons.arrowRight,
+                                        color: Colors.black,
+                                      ),
+                                      sliderButtonIconSize: 40,
+                                      elevation: 0,
+                                      borderRadius: 20,
+                                      innerColor: Colors.white,
+                                      outerColor:
+                                          Color.fromARGB(220, 126, 186, 148),
+                                      onSubmit: () {
+                                        Future.delayed(
+                                          Duration(milliseconds: 700),
+                                          () {
+                                            // Save to Firebase
+                                            Get.back();
+                                          },
+                                        );
+                                      },
+                                      sliderButtonIconPadding: 16,
+                                      child: Container(
+                                        margin: EdgeInsets.only(left: 30),
+                                        child: Text(
+                                          'Slide to confirm',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(
+                          bottom: 20,
+                          left: 23,
+                          right: 23,
+                        ),
+                        width: MediaQuery.of(context).size.width,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(width: 2, color: Colors.black),
+                          borderRadius: BorderRadius.circular(15),
+                          color: Color.fromARGB(255, 140, 203, 255),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Confirm',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: const Color.fromARGB(255, 20, 20, 20),
+                            ),
                           ),
                         ),
                       ),

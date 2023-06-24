@@ -521,7 +521,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                     Container(
                       margin: EdgeInsets.only(left: 3, right: 3),
                       width: MediaQuery.of(context).size.width,
-                      height: 50,
+                      height: 60,
                       decoration: BoxDecoration(
                         border: Border.all(width: 2, color: Colors.black),
                         borderRadius: BorderRadius.circular(15),

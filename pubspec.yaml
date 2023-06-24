@@ -51,6 +51,7 @@ dependencies:
   tflite_flutter_helper: ^0.2.1
   carousel_slider: ^4.2.1
   uuid: ^3.0.7
+  slide_to_act: ^2.0.1
 
 
 

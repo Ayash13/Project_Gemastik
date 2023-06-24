@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +14,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String? phoneNumber;
+  String? userName = FirebaseAuth.instance.currentUser?.displayName ?? "";
   String? userId;
   Map<String, dynamic>? userAddresses;
 
@@ -226,6 +225,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   this.phoneNumber = _phoneNumberController
                       .text; // Update the phoneNumber variable immediately
                   Navigator.of(context).pop();
+                  setState(() {
+                    phoneNumber;
+                  });
                 },
                 child: const Text(
                   'Add',
@@ -305,6 +307,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   this.phoneNumber = _phoneNumberController
                       .text; // Update the phoneNumber variable immediately
                   Navigator.of(context).pop();
+                  setState(() {
+                    phoneNumber;
+                  });
                 },
                 child: const Text(
                   'Update',
@@ -428,6 +433,9 @@ class _ProfilePageState extends State<ProfilePage> {
                       roadNumber.isNotEmpty) {
                     saveAddress(addressTitle, province, city, roadNumber);
                     Navigator.of(context).pop();
+                    setState(() {
+                      addressTitle;
+                    });
                     Get.snackbar(
                       'Success',
                       'New address added',
@@ -486,6 +494,89 @@ class _ProfilePageState extends State<ProfilePage> {
       });
       await fetchAddresses();
     }
+  }
+
+  //update displayname dialog
+  void _showDialogUpdateUsername() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        TextEditingController _usernameController = TextEditingController();
+
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(40),
+            side: BorderSide(width: 1.5, color: Colors.black),
+          ),
+          backgroundColor: Color.fromARGB(255, 255, 251, 235),
+          title: Center(
+            child: Text(
+              'Update Username',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: const Color.fromARGB(255, 20, 20, 20),
+              ),
+            ),
+          ),
+          content: TextField(
+            controller: _usernameController,
+            decoration: const InputDecoration(hintText: 'Username'),
+          ),
+          actions: [
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                color: Color.fromARGB(193, 225, 156, 156),
+              ),
+              child: TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text(
+                  'Cancel',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 1.5,
+                ),
+                borderRadius: BorderRadius.circular(10),
+                color: Color.fromARGB(150, 126, 186, 148),
+              ),
+              child: TextButton(
+                onPressed: () async {
+                  FirebaseAuth.instance.currentUser
+                      ?.updateDisplayName(_usernameController.text);
+                  this.userName = _usernameController
+                      .text; // Update the phoneNumber variable immediately
+                  Navigator.of(context).pop();
+                  setState(() {
+                    userName;
+                  });
+                },
+                child: const Text(
+                  'Update',
+                  style: TextStyle(
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void showAddress() {
@@ -642,7 +733,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 children: [
                   GestureDetector(
                     onTap: () {
-                      Navigator.pop(context);
+                      setState(() {
+                        userAddresses;
+                      });
+                      Get.back();
                     },
                     child: Container(
                       height: 50,
@@ -719,21 +813,42 @@ class _ProfilePageState extends State<ProfilePage> {
             SizedBox(
               height: 20,
             ),
-            Text(
-              FirebaseAuth.instance.currentUser?.displayName ?? "",
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: const Color.fromARGB(255, 20, 20, 20),
-              ),
-            ),
-            Text(
-              FirebaseAuth.instance.currentUser?.email ?? "",
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 20, 20, 20),
-              ),
+            Stack(
+              children: [
+                Positioned(
+                  right: 20,
+                  top: 1,
+                  child: GestureDetector(
+                    onTap: () {
+                      _showDialogUpdateUsername();
+                    },
+                    child: Icon(
+                      MdiIcons.accountEdit,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      userName!,
+                      style: GoogleFonts.poppins(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 20, 20, 20),
+                      ),
+                    ),
+                    Text(
+                      FirebaseAuth.instance.currentUser?.email ?? "",
+                      style: GoogleFonts.poppins(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: const Color.fromARGB(255, 20, 20, 20),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
             SizedBox(
               height: 20,
@@ -934,7 +1049,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Icon(
-                                  Icons.arrow_forward_ios_rounded,
+                                  phoneNumber != null
+                                      ? Icons.arrow_forward_ios_rounded
+                                      : Icons.add,
                                   color: Colors.black,
                                 ),
                               ),
