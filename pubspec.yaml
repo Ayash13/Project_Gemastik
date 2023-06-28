@@ -52,6 +52,13 @@ dependencies:
   carousel_slider: ^4.2.1
   uuid: ^3.0.7
   slide_to_act: ^2.0.1
+  accordion: ^2.5.1
+  intl: ^0.18.1
+  ticket_widget: ^0.0.1
+  screenshot: ^2.1.0
+  image_gallery_saver: ^2.0.2
+  permission_handler: ^10.3.0
+
 
 
 

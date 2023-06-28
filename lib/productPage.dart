@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 import 'cartPage.dart';
-import 'checkOutScreen.dart';
 
 class ProductPage extends StatefulWidget {
   final String productId;
@@ -89,7 +88,8 @@ class _ProductPageState extends State<ProductPage> {
       final productDataToAdd = {
         'productId': widget.productId,
         'quantity': quantity,
-        'price': productPrice
+        'price': productPrice,
+        'product': productData['title']
       };
 
       if (isAddedToCart) {
@@ -501,8 +501,28 @@ class _ProductPageState extends State<ProductPage> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
+                                Container(
+                                  height: 50,
+                                  width: 180,
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          width: 2, color: Colors.black),
+                                      borderRadius: BorderRadius.circular(30),
+                                      color:
+                                          Color.fromARGB(255, 255, 226, 140)),
+                                  child: Center(
+                                    child: Text(
+                                      'Quantity :',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                                 GestureDetector(
                                   onTap: () {
                                     decrementQuantity();
@@ -535,43 +555,12 @@ class _ProductPageState extends State<ProductPage> {
                                     height: 50,
                                     width: 50,
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: Color.fromARGB(255, 255, 226, 140),
-                                    ),
+                                        border: Border.all(
+                                            width: 2, color: Colors.black),
+                                        borderRadius: BorderRadius.circular(30),
+                                        color:
+                                            Color.fromARGB(255, 255, 226, 140)),
                                     child: Icon(MdiIcons.plus),
-                                  ),
-                                ),
-                                GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      toggleCartStatus();
-                                    });
-                                  },
-                                  child: Container(
-                                    height: 50,
-                                    width: 150,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          width: 2, color: Colors.black),
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: isAddedToCart
-                                          ? Color.fromARGB(255, 126, 186, 148)
-                                          : Color.fromARGB(255, 255, 226, 140),
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        isAddedToCart
-                                            ? 'Remove'
-                                            : 'Add to Cart',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
                                   ),
                                 ),
                               ],
@@ -581,32 +570,24 @@ class _ProductPageState extends State<ProductPage> {
                             ),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CheckoutScreen(
-                                      productId: widget.productId,
-                                      quantity: quantity,
-                                    ),
-                                  ),
-                                );
+                                setState(() {
+                                  toggleCartStatus();
+                                });
                               },
                               child: Container(
-                                margin: EdgeInsets.only(
-                                  left: 12,
-                                  right: 12,
-                                ),
-                                height: 50,
+                                height: 55,
                                 width: MediaQuery.of(context).size.width,
                                 decoration: BoxDecoration(
                                   border:
                                       Border.all(width: 2, color: Colors.black),
                                   borderRadius: BorderRadius.circular(30),
-                                  color: Color.fromARGB(255, 255, 140, 140),
+                                  color: isAddedToCart
+                                      ? Color.fromARGB(255, 255, 140, 140)
+                                      : Color.fromARGB(255, 126, 186, 148),
                                 ),
                                 child: Center(
                                   child: Text(
-                                    'Buy Now',
+                                    isAddedToCart ? 'Remove' : 'Add to Cart',
                                     style: GoogleFonts.poppins(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w600,

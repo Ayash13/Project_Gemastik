@@ -238,7 +238,7 @@ class _CartItemListState extends State<CartItemList> {
                           decoration: BoxDecoration(
                             border: Border.all(width: 1.5, color: Colors.black),
                             borderRadius: BorderRadius.circular(35),
-                            color: Color.fromARGB(255, 233, 167, 105),
+                            color: Color.fromARGB(255, 255, 187, 124),
                           ),
                           child: Center(
                             child: Text(

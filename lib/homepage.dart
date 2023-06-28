@@ -7,6 +7,7 @@ import 'package:project_gemastik/discover.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:project_gemastik/bookpage.dart';
 import 'package:project_gemastik/feedspage.dart';
+import 'package:project_gemastik/notification.dart';
 import 'package:project_gemastik/profilepage.dart';
 
 import 'classifier/widget/image_recogniser.dart';
@@ -228,11 +229,20 @@ class _HomePageLayoutState extends State<HomePageLayout> {
                       ),
                     ),
                   ),
-                  itemAppBar(
-                    iconbarColor: Color.fromARGB(160, 126, 186, 148),
-                    iconbar: Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.black,
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(
+                        NotifiCation(),
+                        transition: Transition.leftToRight,
+                        duration: Duration(milliseconds: 300),
+                      );
+                    },
+                    child: itemAppBar(
+                      iconbarColor: Color.fromARGB(160, 126, 186, 148),
+                      iconbar: Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                   GestureDetector(

@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:project_gemastik/confirmPayment.dart';
+import 'package:project_gemastik/notification.dart';
 import 'package:project_gemastik/profilepage.dart';
 import 'package:slide_to_act/slide_to_act.dart';
 
@@ -20,30 +22,18 @@ class CheckoutCartScreen extends StatefulWidget {
 
 class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
   int quantity = 1;
-  String selectedPaymentMethod = 'Credit Card';
+  double totalAmount = 0.0;
   Map<String, dynamic>? userAddresses;
   String? phoneNumber;
+  //false = trasfer bank
+  //true = credit card
+  bool isPaymentMethod = false;
   @override
   void initState() {
     super.initState();
     fetchAddresses();
     fetchPhoneNumber();
     calculateTotalAmount();
-  }
-
-// Create a list of available payment methods
-  List<String> paymentMethods = [
-    'Credit Card',
-    'Debit Card',
-    'PayPal',
-    'Bank Transfer',
-  ];
-
-// Create a function to handle the selection of a payment method
-  void selectPaymentMethod(String method) {
-    setState(() {
-      selectedPaymentMethod = method;
-    });
   }
 
   Future<void> fetchAddresses() async {
@@ -226,8 +216,6 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
       });
     }
   }
-
-  double totalAmount = 0.0;
 
   void calculateTotalAmount() {
     final cartItems = FirebaseFirestore.instance
@@ -612,330 +600,7 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                           context: context,
                           isScrollControlled: true,
                           backgroundColor: Colors.transparent,
-                          builder: (context) => Padding(
-                            padding: EdgeInsets.only(
-                                bottom:
-                                    MediaQuery.of(context).viewInsets.bottom),
-                            child: Container(
-                              height: 500,
-                              decoration: BoxDecoration(
-                                color: Color.fromARGB(255, 235, 246, 255),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(40),
-                                  topRight: Radius.circular(40),
-                                ),
-                                border:
-                                    Border.all(width: 2, color: Colors.black),
-                              ),
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: ListView(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Container(
-                                          margin: EdgeInsets.all(15),
-                                          height: 5,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(
-                                          left: 7, right: 7),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                'Product',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color.fromARGB(
-                                                      255, 20, 20, 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          Divider(
-                                            thickness: 1,
-                                            color: Colors.black,
-                                          ),
-
-                                          // Implementing the cart items here
-                                          SizedBox(
-                                            height: 100,
-                                            child: ListView(
-                                              children: [
-                                                Column(
-                                                  children: List.generate(
-                                                      widget.cartItems.length,
-                                                      (index) {
-                                                    final cartItem =
-                                                        widget.cartItems[index];
-                                                    final productId =
-                                                        cartItem['productId'] ??
-                                                            '';
-                                                    final quantity =
-                                                        cartItem['quantity'] ??
-                                                            0;
-                                                    final productPrice =
-                                                        cartItem['price'] ??
-                                                            0.0;
-
-                                                    // Retrieve product details from Firestore based on the productId
-                                                    final productRef =
-                                                        FirebaseFirestore
-                                                            .instance
-                                                            .collection(
-                                                                'products')
-                                                            .doc(productId);
-
-                                                    return FutureBuilder<
-                                                        DocumentSnapshot>(
-                                                      future: productRef.get(),
-                                                      builder:
-                                                          (context, snapshot) {
-                                                        if (snapshot.hasData) {
-                                                          final productData = snapshot
-                                                                      .data!
-                                                                      .data()
-                                                                  as Map<String,
-                                                                      dynamic>? ??
-                                                              {};
-                                                          final productName =
-                                                              productData['title']
-                                                                      as String? ??
-                                                                  '';
-
-                                                          return Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        20,
-                                                                    vertical:
-                                                                        5),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Text(
-                                                                  '${productName} :',
-                                                                  style: GoogleFonts
-                                                                      .poppins(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: const Color
-                                                                            .fromARGB(
-                                                                        255,
-                                                                        20,
-                                                                        20,
-                                                                        20),
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  'Rp ${productPrice.toStringAsFixed(0)}',
-                                                                  style: GoogleFonts
-                                                                      .poppins(
-                                                                    fontSize:
-                                                                        16,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: const Color
-                                                                            .fromARGB(
-                                                                        255,
-                                                                        20,
-                                                                        20,
-                                                                        20),
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          );
-                                                        }
-
-                                                        if (snapshot.hasError) {
-                                                          return Text(
-                                                              'Error retrieving product');
-                                                        }
-
-                                                        return Center(
-                                                            child:
-                                                                CircularProgressIndicator());
-                                                      },
-                                                    );
-                                                  }),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Divider(
-                                            thickness: 1,
-                                            color: Colors.black,
-                                          ),
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Shipping price :',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color.fromARGB(
-                                                      255, 20, 20, 20),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Rp 0',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color.fromARGB(
-                                                      255, 20, 20, 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-
-                                          SizedBox(
-                                            height: 10,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                'Total price :',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color.fromARGB(
-                                                      255, 20, 20, 20),
-                                                ),
-                                              ),
-                                              Text(
-                                                'Rp ${totalAmount.toStringAsFixed(0)}',
-                                                style: GoogleFonts.poppins(
-                                                  fontSize: 17,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: const Color.fromARGB(
-                                                      255, 20, 20, 20),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: 20,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    // Payment method dropdown
-                                    Container(
-                                      margin:
-                                          EdgeInsets.symmetric(horizontal: 10),
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: DropdownButtonHideUnderline(
-                                        child: DropdownButton<String>(
-                                          value: selectedPaymentMethod,
-                                          hint: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 10),
-                                            child:
-                                                Text('Select Payment Method'),
-                                          ),
-                                          onChanged: (String? method) {
-                                            if (method != null) {
-                                              selectPaymentMethod(method);
-                                            }
-                                          },
-                                          items: paymentMethods
-                                              .map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                    horizontal: 10),
-                                                child: Text(value),
-                                              ),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: 20,
-                                    ),
-                                    SlideAction(
-                                      sliderButtonIcon: Icon(
-                                        MdiIcons.arrowRight,
-                                        color: Colors.black,
-                                      ),
-                                      sliderButtonIconSize: 40,
-                                      elevation: 0,
-                                      borderRadius: 20,
-                                      innerColor: Colors.white,
-                                      outerColor:
-                                          Color.fromARGB(220, 126, 186, 148),
-                                      onSubmit: () {
-                                        Future.delayed(
-                                          Duration(milliseconds: 700),
-                                          () {
-                                            // Save to Firebase
-                                            Get.back();
-                                          },
-                                        );
-                                      },
-                                      sliderButtonIconPadding: 16,
-                                      child: Container(
-                                        margin: EdgeInsets.only(left: 30),
-                                        child: Text(
-                                          'Slide to confirm',
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w600,
-                                            color: const Color.fromARGB(
-                                                255, 20, 20, 20),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
+                          builder: (context) => comfirmCheckout(context),
                         );
                       },
                       child: Container(
@@ -970,6 +635,553 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget comfirmCheckout(BuildContext context) {
+    return StatefulBuilder(
+      builder: (BuildContext context, setState) {
+        return Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 570,
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 235, 246, 255),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(40),
+                topRight: Radius.circular(40),
+              ),
+              border: Border.all(width: 2, color: Colors.black),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(15),
+                        height: 5,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(left: 7, right: 7),
+                          child: Column(
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Product',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: List.generate(
+                                  160 ~/ 2,
+                                  (index) => Expanded(
+                                    child: Container(
+                                      color: index % 2 == 0
+                                          ? Colors.transparent
+                                          : Colors.black,
+                                      height: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              // Implementing the cart items here
+                              SizedBox(
+                                height: 100,
+                                child: ListView(
+                                  children: [
+                                    Column(
+                                      children: List.generate(
+                                        widget.cartItems.length,
+                                        (index) {
+                                          final cartItem =
+                                              widget.cartItems[index];
+                                          final productId =
+                                              cartItem['productId'] ?? '';
+                                          final quantity =
+                                              cartItem['quantity'] ?? 0;
+                                          final productPrice =
+                                              cartItem['price'] ?? 0.0;
+
+                                          // Retrieve product details from Firestore based on the productId
+                                          final productRef = FirebaseFirestore
+                                              .instance
+                                              .collection('products')
+                                              .doc(productId);
+
+                                          return FutureBuilder<
+                                              DocumentSnapshot>(
+                                            future: productRef.get(),
+                                            builder: (context, snapshot) {
+                                              if (snapshot.hasData) {
+                                                final productData =
+                                                    snapshot.data!.data()
+                                                            as Map<String,
+                                                                dynamic>? ??
+                                                        {};
+                                                final productName =
+                                                    productData['title']
+                                                            as String? ??
+                                                        '';
+
+                                                return Padding(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 5),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        '${productName} :',
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: const Color
+                                                                  .fromARGB(
+                                                              255, 20, 20, 20),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        'Rp ${(productPrice * quantity).toStringAsFixed(0)}',
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: const Color
+                                                                  .fromARGB(
+                                                              255, 20, 20, 20),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              }
+
+                                              if (snapshot.hasError) {
+                                                return Text(
+                                                    'Error retrieving product');
+                                              }
+
+                                              return Center(
+                                                  child:
+                                                      CircularProgressIndicator());
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                children: List.generate(
+                                  160 ~/ 2,
+                                  (index) => Expanded(
+                                    child: Container(
+                                      color: index % 2 == 0
+                                          ? Colors.transparent
+                                          : Colors.black,
+                                      height: 2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Shipping price :',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Rp 0',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Total price :',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
+                                  Text(
+                                    'Rp ${totalAmount.toStringAsFixed(0)}',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w600,
+                                      color:
+                                          const Color.fromARGB(255, 20, 20, 20),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Payment method
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1.5,
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromARGB(179, 252, 119, 42),
+                                  ),
+                                  child: Icon(
+                                    MdiIcons.creditCard,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Container(
+                                  height: 40,
+                                  width: 2,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Transfer Bank',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      '0000000',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1.5,
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Radio<bool>(
+                                    activeColor: Colors.black,
+                                    value: isPaymentMethod,
+                                    groupValue: false,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isPaymentMethod = !isPaymentMethod;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(20),
+                            color: Colors.white,
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: Row(
+                              children: [
+                                Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1.5,
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Color.fromARGB(179, 252, 119, 42),
+                                  ),
+                                  child: Icon(
+                                    MdiIcons.star,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+                                Container(
+                                  height: 40,
+                                  width: 2,
+                                  color: Colors.black,
+                                ),
+                                SizedBox(width: 10),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Point',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.w600,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
+                                      ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      '0000000',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w400,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                Container(
+                                  height: 40,
+                                  width: 40,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      width: 1.5,
+                                      color: Colors.black,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Radio<bool>(
+                                    activeColor: Colors.black,
+                                    value: isPaymentMethod,
+                                    groupValue: true,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        isPaymentMethod = !isPaymentMethod;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: 15,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        SlideAction(
+                          sliderButtonIcon: Icon(
+                            MdiIcons.arrowRight,
+                            color: Colors.black,
+                          ),
+                          sliderButtonIconSize: 40,
+                          elevation: 0,
+                          borderRadius: 20,
+                          innerColor: Colors.white,
+                          outerColor: Color.fromARGB(220, 126, 186, 148),
+                          onSubmit: () {
+                            Future.delayed(
+                              Duration(milliseconds: 700),
+                              () async {
+                                try {
+                                  final User? currentUser =
+                                      FirebaseAuth.instance.currentUser;
+                                  if (currentUser == null) {
+                                    return; // User is not signed in, handle accordingly
+                                  }
+
+                                  final userTransactionsRef = FirebaseFirestore
+                                      .instance
+                                      .collection('users')
+                                      .doc(currentUser.uid)
+                                      .collection('transactions');
+                                  final transactionDoc =
+                                      userTransactionsRef.doc();
+                                  final transactionId = transactionDoc.id;
+
+                                  final transactionData = {
+                                    'id': transactionId,
+                                    'address': userAddresses,
+                                    'name': FirebaseAuth.instance.currentUser
+                                            ?.displayName ??
+                                        '',
+                                    'email': FirebaseAuth
+                                            .instance.currentUser?.email ??
+                                        '',
+                                    'phone': phoneNumber,
+                                    'time': DateTime.now(),
+                                    'date': DateTime.now().day,
+                                    'month': DateTime.now().month,
+                                    'products': widget.cartItems,
+                                    'shippingPrice': 0,
+                                    'totalPrice': totalAmount,
+                                    'paymentMethod': isPaymentMethod
+                                        ? 'Point'
+                                        : 'Transfer Bank',
+                                    'status': isPaymentMethod
+                                        ? 'Payment success'
+                                        : 'Waiting for payment',
+                                  };
+
+                                  await transactionDoc.set(transactionData);
+
+                                  // Create a TransactionHistory instance
+                                  final transactionHistory = TransactionHistory(
+                                    id: transactionId,
+                                    address: userAddresses as List<dynamic>,
+                                    name: FirebaseAuth.instance.currentUser
+                                            ?.displayName ??
+                                        '',
+                                    email: FirebaseAuth
+                                            .instance.currentUser?.email ??
+                                        '',
+                                    phone: phoneNumber as String,
+                                    time: DateTime.now(),
+                                    date: DateTime.now().day,
+                                    month: DateTime.now().month,
+                                    products: widget.cartItems,
+                                    shippingPrice: 0,
+                                    totalPrice: totalAmount,
+                                    paymentMethod: isPaymentMethod
+                                        ? 'Point'
+                                        : 'Transfer Bank',
+                                    status: isPaymentMethod
+                                        ? 'Payment success'
+                                        : 'Waiting for payment',
+                                  );
+
+                                  // Save the transaction history to Firestore
+                                  await transactionDoc
+                                      .set(transactionHistory.toMap());
+
+                                  // Do something with the transaction history object, such as saving to a list or navigating to another screen
+
+                                  Get.back(); // Show a success message or navigate to another screen
+                                } catch (error) {
+                                  print('Error saving transaction: $error');
+                                  // Show an error message or handle the error accordingly
+                                }
+                                Get.offAll(ConfirmPayment());
+                              },
+                            );
+                          },
+                          sliderButtonIconPadding: 16,
+                          child: Container(
+                            margin: EdgeInsets.only(left: 30),
+                            child: Text(
+                              'Slide to confirm',
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w600,
+                                color: const Color.fromARGB(255, 20, 20, 20),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
