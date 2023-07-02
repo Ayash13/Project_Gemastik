@@ -13,7 +13,6 @@ import 'package:project_gemastik/notification.dart';
 import 'package:ticket_widget/ticket_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:image_picker/image_picker.dart';
@@ -153,7 +152,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                       ),
                       child: Center(
                         child: Text(
-                          'Confirm Payment',
+                          'Order Details',
                           style: GoogleFonts.poppins(
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
@@ -174,7 +173,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                           child: Material(
                             child: Container(
                               color: Color.fromARGB(255, 105, 175, 233),
-                              height: 720,
+                              height: 730,
                               width: 400,
                               child: Padding(
                                 padding: const EdgeInsets.all(20.0),
@@ -286,6 +285,10 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                             ),
                           ),
                         ),
+                      ),
+                    if (transactionHistory.status == "Payment success")
+                      SizedBox(
+                        height: 20,
                       ),
                   ],
                 ),
@@ -505,7 +508,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
             return TicketWidget(
               width: MediaQuery.of(context).size.width * 0.9,
-              height: 700,
+              height: 710,
               isCornerRounded: true,
               padding: EdgeInsets.all(20),
               child: Column(
@@ -815,16 +818,34 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            height: 15,
-                          ),
+                          if (transactionHistory.status == "Payment success")
+                            SizedBox(
+                              height: 20,
+                            )
+                          else
+                            SizedBox(
+                              height: 12,
+                            ),
                           Center(
-                            child: Text(
-                              transactionHistory.status,
-                              style: GoogleFonts.sourceCodePro(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            child: Column(
+                              children: [
+                                Text(
+                                  transactionHistory.status,
+                                  style: GoogleFonts.sourceCodePro(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (transactionHistory.status ==
+                                    "Waiting for payment")
+                                  Text(
+                                    "Please transfer to : BCA (8421184747)",
+                                    style: GoogleFonts.sourceCodePro(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                              ],
                             ),
                           ),
                         ],

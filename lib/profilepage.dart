@@ -816,8 +816,8 @@ class _ProfilePageState extends State<ProfilePage> {
             Stack(
               children: [
                 Positioned(
-                  right: 20,
-                  top: 1,
+                  right: 10,
+                  top: 3,
                   child: GestureDetector(
                     onTap: () {
                       _showDialogUpdateUsername();
@@ -877,24 +877,47 @@ class _ProfilePageState extends State<ProfilePage> {
                       SizedBox(
                         height: 20,
                       ),
-                      Text(
-                        'Your Point',
-                        style: GoogleFonts.poppins(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 20, 20, 20),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Text(
-                        '1000',
-                        style: GoogleFonts.poppins(
-                          fontSize: 40,
-                          fontWeight: FontWeight.w600,
-                          color: const Color.fromARGB(255, 20, 20, 20),
-                        ),
+                      StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                        stream: FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(FirebaseAuth.instance.currentUser!.uid)
+                            .snapshots(),
+                        builder: (BuildContext context,
+                            AsyncSnapshot<
+                                    DocumentSnapshot<Map<String, dynamic>>>
+                                snapshot) {
+                          if (snapshot.hasError) {
+                            return Text('Error: ${snapshot.error}');
+                          }
+
+                          // Check if the document exists and contains the 'Point' field
+                          if (snapshot.hasData &&
+                              snapshot.data!.exists &&
+                              snapshot.data!.data()!.containsKey('Point')) {
+                            double pointValueDouble =
+                                snapshot.data!.data()!['Point'];
+                            int pointValue = pointValueDouble.toInt();
+
+                            return Column(
+                              children: [
+                                Text(
+                                  pointValue.toString(),
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 60,
+                                    fontWeight: FontWeight.w600,
+                                    color:
+                                        const Color.fromARGB(255, 20, 20, 20),
+                                  ),
+                                ),
+                              ],
+                            );
+                          }
+
+                          // Handle the case when the document doesn't exist or doesn't contain the 'Point' field
+                          return Center(
+                            child: Text('Point not found'),
+                          );
+                        },
                       ),
                       SizedBox(
                         height: 15,
@@ -917,27 +940,13 @@ class _ProfilePageState extends State<ProfilePage> {
                           height: MediaQuery.of(context).size.height,
                           width: MediaQuery.of(context).size.width,
                           color: Color.fromARGB(255, 140, 203, 255),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 10, bottom: 10, left: 30, right: 30),
-                            child: Container(
-                              height: 50,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(width: 1.5, color: Colors.black),
-                                borderRadius: BorderRadius.circular(30),
-                                color: Colors.white,
-                              ),
-                              child: Center(
-                                child: Text(
-                                  'Withdraw',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        const Color.fromARGB(255, 20, 20, 20),
-                                  ),
-                                ),
+                          child: Center(
+                            child: Text(
+                              'Your Point',
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                color: const Color.fromARGB(255, 20, 20, 20),
                               ),
                             ),
                           ),

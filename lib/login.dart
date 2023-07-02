@@ -81,29 +81,50 @@ class _LogInState extends State<LogIn> {
   }
 
   Future<void> _logInAdmin(String email, String password) async {
-    // Simulate an asynchronous login process
-    await Future.delayed(Duration(seconds: 2));
-
-    if (email == 'admin1@amail.com' && password == 'admin123') {
-      // Navigate to admin page
-      Get.offAll(AdminMainPage());
-      Get.snackbar(
-        'Success',
-        'Welcome Admin!',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Color.fromARGB(240, 126, 186, 148),
-        colorText: Colors.black,
-        duration: Duration(seconds: 3),
-        margin: EdgeInsets.all(10),
-        borderRadius: 10,
-        borderColor: Colors.black,
-        borderWidth: 1.5,
+    try {
+      // Sign in with email and password using Firebase Authentication
+      final authResult = await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
       );
-    } else {
-      // Invalid credentials, show error message or perform other actions
+
+      // Check if the user is an admin based on their email
+      final user = authResult.user;
+      if (user != null && user.email == 'admin1@amail.com') {
+        // Navigate to the admin page
+        Get.offAll(AdminMainPage());
+        Get.snackbar(
+          'Success',
+          'Welcome Admin!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Color.fromARGB(240, 126, 186, 148),
+          colorText: Colors.black,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(10),
+          borderRadius: 10,
+          borderColor: Colors.black,
+          borderWidth: 1.5,
+        );
+      } else {
+        // Invalid credentials, show error message or perform other actions
+        Get.snackbar(
+          'Error',
+          'Wrong email or password',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Color.fromARGB(244, 249, 135, 127),
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(10),
+          borderRadius: 10,
+          borderColor: Colors.black,
+          borderWidth: 1.5,
+        );
+      }
+    } catch (e) {
+      // Handle login errors
       Get.snackbar(
         'Error',
-        'Wrong email or password',
+        '$e',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Color.fromARGB(244, 249, 135, 127),
         colorText: Colors.white,
@@ -244,14 +265,14 @@ class _LogInState extends State<LogIn> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
+                      onTap: () async {
                         if (email == 'admin1@amail.com' &&
                             password == 'admin123') {
                           // Admin login logic
-                          _logInAdmin(email, password);
+                          await _logInAdmin(email, password);
                         } else if (_formKey.currentState!.validate()) {
                           // Regular user login logic
-                          _logInWithEmailAndPassword(email, password);
+                          await _logInWithEmailAndPassword(email, password);
                         }
                       },
                       child: Container(

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:project_gemastik/Admin/mainPage.dart';
+import 'package:project_gemastik/Admin/transaction.dart';
 
 class TrashPickup extends StatefulWidget {
   const TrashPickup({Key? key}) : super(key: key);
@@ -28,11 +31,16 @@ class _TrashPickupState extends State<TrashPickup> {
                 SizedBox(
                   width: 20,
                 ),
-                itemAppBar(
-                  iconbarColor: Color.fromARGB(160, 126, 186, 148),
-                  iconbar: Icon(
-                    Icons.add_circle_outline,
-                    color: Colors.black,
+                GestureDetector(
+                  onTap: () {
+                    Get.to(TransactionPage());
+                  },
+                  child: itemAppBar(
+                    iconbarColor: Color.fromARGB(160, 126, 186, 148),
+                    iconbar: Icon(
+                      MdiIcons.receiptClockOutline,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ],

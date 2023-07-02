@@ -1,13 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:slide_to_act/slide_to_act.dart';
+
 import 'package:project_gemastik/confirmPayment.dart';
 import 'package:project_gemastik/notification.dart';
 import 'package:project_gemastik/profilepage.dart';
-import 'package:slide_to_act/slide_to_act.dart';
 
 class CheckoutCartScreen extends StatefulWidget {
   final List<Map<String, dynamic>> cartItems;
@@ -335,6 +336,7 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                             productId: productId,
                             quantity: quantity,
                             productPrice: productPrice,
+                            image: productImageURL,
                           );
                         }
 
@@ -683,7 +685,7 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Product',
+                                    'Product :',
                                     style: GoogleFonts.poppins(
                                       fontSize: 17,
                                       fontWeight: FontWeight.w600,
@@ -932,7 +934,7 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                     ),
                                     SizedBox(height: 5),
                                     Text(
-                                      '0000000',
+                                      'BCA (8421184747)',
                                       style: GoogleFonts.poppins(
                                         fontSize: 13,
                                         fontWeight: FontWeight.w400,
@@ -983,84 +985,157 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                           ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
-                            child: Row(
-                              children: [
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Color.fromARGB(179, 252, 119, 42),
-                                  ),
-                                  child: Icon(
-                                    MdiIcons.star,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                SizedBox(width: 10),
-                                Container(
-                                  height: 40,
-                                  width: 2,
-                                  color: Colors.black,
-                                ),
-                                SizedBox(width: 10),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Point',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
+                            child: StreamBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<
+                                          DocumentSnapshot<
+                                              Map<String, dynamic>>>
+                                      snapshot) {
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                // Check if the document exists and contains the 'Point' field
+                                if (snapshot.hasData &&
+                                    snapshot.data!.exists &&
+                                    snapshot.data!
+                                        .data()!
+                                        .containsKey('Point')) {
+                                  double pointValueDouble =
+                                      snapshot.data!.data()!['Point'];
+                                  int pointValue = pointValueDouble.toInt();
+
+                                  return Row(
+                                    children: [
+                                      Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color:
+                                              Color.fromARGB(179, 252, 119, 42),
+                                        ),
+                                        child: Icon(
+                                          MdiIcons.star,
+                                          color: Colors.black,
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(height: 5),
-                                    Text(
-                                      '0000000',
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.w400,
-                                        color: const Color.fromARGB(
-                                            255, 20, 20, 20),
+                                      SizedBox(width: 10),
+                                      Container(
+                                        height: 40,
+                                        width: 2,
+                                        color: Colors.black,
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                Spacer(),
-                                Container(
-                                  height: 40,
-                                  width: 40,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      width: 1.5,
-                                      color: Colors.black,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Radio<bool>(
-                                    activeColor: Colors.black,
-                                    value: isPaymentMethod,
-                                    groupValue: true,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        isPaymentMethod = !isPaymentMethod;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 15,
-                                ),
-                              ],
+                                      SizedBox(width: 10),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Point',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color.fromARGB(
+                                                  255, 20, 20, 20),
+                                            ),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            pointValue.toString(),
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w400,
+                                              color: const Color.fromARGB(
+                                                  255, 20, 20, 20),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Builder(
+                                            builder: (BuildContext context) {
+                                          if (pointValue >= totalAmount) {
+                                            return Radio<bool>(
+                                              activeColor: Colors.black,
+                                              value: isPaymentMethod,
+                                              groupValue: true,
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  isPaymentMethod =
+                                                      !isPaymentMethod;
+                                                });
+                                              },
+                                            );
+                                          } else {
+                                            return GestureDetector(
+                                              onTap: () {
+                                                Get.snackbar(
+                                                  'Error',
+                                                  'Not enough point',
+                                                  snackPosition:
+                                                      SnackPosition.TOP,
+                                                  backgroundColor:
+                                                      Color.fromARGB(
+                                                          244, 249, 135, 127),
+                                                  colorText: Colors.white,
+                                                  duration:
+                                                      Duration(seconds: 1),
+                                                  margin: EdgeInsets.all(10),
+                                                  borderRadius: 10,
+                                                  borderColor: Colors.black,
+                                                  borderWidth: 1.5,
+                                                );
+                                              },
+                                              child: Tooltip(
+                                                message: 'Insufficient Points',
+                                                child: Opacity(
+                                                  opacity: 0,
+                                                  child: Radio<bool>(
+                                                    activeColor: Colors.black,
+                                                    value: isPaymentMethod,
+                                                    groupValue: false,
+                                                    onChanged: null,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        }),
+                                      ),
+                                      SizedBox(width: 15),
+                                    ],
+                                  );
+                                }
+
+                                // Handle the case when the document doesn't exist or doesn't contain the 'Point' field
+                                return Center(child: Text('Point not found'));
+                              },
                             ),
                           ),
                         ),
+
                         SizedBox(
                           height: 20,
                         ),
@@ -1074,91 +1149,92 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                           borderRadius: 20,
                           innerColor: Colors.white,
                           outerColor: Color.fromARGB(220, 126, 186, 148),
-                          onSubmit: () {
-                            Future.delayed(
-                              Duration(milliseconds: 700),
-                              () async {
-                                try {
-                                  final User? currentUser =
-                                      FirebaseAuth.instance.currentUser;
-                                  if (currentUser == null) {
-                                    return; // User is not signed in, handle accordingly
-                                  }
+                          onSubmit: () async {
+                            try {
+                              final User? currentUser =
+                                  FirebaseAuth.instance.currentUser;
+                              if (currentUser == null) {
+                                return; // User is not signed in, handle accordingly
+                              }
 
-                                  final userTransactionsRef = FirebaseFirestore
-                                      .instance
-                                      .collection('users')
-                                      .doc(currentUser.uid)
-                                      .collection('transactions');
-                                  final transactionDoc =
-                                      userTransactionsRef.doc();
-                                  final transactionId = transactionDoc.id;
-
-                                  final transactionData = {
-                                    'id': transactionId,
-                                    'address': userAddresses,
-                                    'name': FirebaseAuth.instance.currentUser
-                                            ?.displayName ??
+                              final userRef = FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(currentUser.uid);
+                              final transactionData = {
+                                'address': userAddresses,
+                                'name': FirebaseAuth
+                                        .instance.currentUser?.displayName ??
+                                    '',
+                                'email':
+                                    FirebaseAuth.instance.currentUser?.email ??
                                         '',
-                                    'email': FirebaseAuth
-                                            .instance.currentUser?.email ??
-                                        '',
-                                    'phone': phoneNumber,
-                                    'time': DateTime.now(),
-                                    'date': DateTime.now().day,
-                                    'month': DateTime.now().month,
-                                    'products': widget.cartItems,
-                                    'shippingPrice': 0,
-                                    'totalPrice': totalAmount,
-                                    'paymentMethod': isPaymentMethod
-                                        ? 'Point'
-                                        : 'Transfer Bank',
-                                    'status': isPaymentMethod
-                                        ? 'Payment success'
-                                        : 'Waiting for payment',
-                                  };
+                                'phone': phoneNumber,
+                                'time': DateTime.now(),
+                                'date': DateTime.now().day,
+                                'month': DateTime.now().month,
+                                'products': widget.cartItems,
+                                'shippingPrice': 0,
+                                'totalPrice': totalAmount,
+                                'paymentMethod':
+                                    isPaymentMethod ? 'Point' : 'Transfer Bank',
+                                'status': isPaymentMethod
+                                    ? 'Payment success'
+                                    : 'Waiting for payment',
+                              };
 
-                                  await transactionDoc.set(transactionData);
-
-                                  // Create a TransactionHistory instance
-                                  final transactionHistory = TransactionHistory(
-                                    id: transactionId,
-                                    address: userAddresses as List<dynamic>,
-                                    name: FirebaseAuth.instance.currentUser
-                                            ?.displayName ??
-                                        '',
-                                    email: FirebaseAuth
-                                            .instance.currentUser?.email ??
-                                        '',
-                                    phone: phoneNumber as String,
-                                    time: DateTime.now(),
-                                    date: DateTime.now().day,
-                                    month: DateTime.now().month,
-                                    products: widget.cartItems,
-                                    shippingPrice: 0,
-                                    totalPrice: totalAmount,
-                                    paymentMethod: isPaymentMethod
-                                        ? 'Point'
-                                        : 'Transfer Bank',
-                                    status: isPaymentMethod
-                                        ? 'Payment success'
-                                        : 'Waiting for payment',
-                                  );
-
-                                  // Save the transaction history to Firestore
-                                  await transactionDoc
-                                      .set(transactionHistory.toMap());
-
-                                  // Do something with the transaction history object, such as saving to a list or navigating to another screen
-
-                                  Get.back(); // Show a success message or navigate to another screen
-                                } catch (error) {
-                                  print('Error saving transaction: $error');
-                                  // Show an error message or handle the error accordingly
+                              if (isPaymentMethod) {
+                                final userSnapshot = await userRef.get();
+                                final int pointValue =
+                                    userSnapshot.data()?['Point'] ?? 0;
+                                if (pointValue >= totalAmount) {
+                                  await userRef.update(
+                                      {'Point': pointValue - totalAmount});
+                                } else {
+                                  // Show an error message or handle insufficient points accordingly
+                                  return;
                                 }
-                                Get.offAll(ConfirmPayment());
-                              },
-                            );
+                              }
+
+                              final transactionRef =
+                                  userRef.collection('transactions').doc();
+                              final transactionId = transactionRef.id;
+                              transactionData['id'] = transactionId;
+
+                              await transactionRef.set(transactionData);
+
+                              final transactionHistory = TransactionHistory(
+                                id: transactionId,
+                                address: userAddresses as List<dynamic>,
+                                name: FirebaseAuth
+                                        .instance.currentUser?.displayName ??
+                                    '',
+                                email:
+                                    FirebaseAuth.instance.currentUser?.email ??
+                                        '',
+                                phone: phoneNumber as String,
+                                time: DateTime.now(),
+                                date: DateTime.now().day,
+                                month: DateTime.now().month,
+                                products: widget.cartItems,
+                                shippingPrice: 0,
+                                totalPrice: totalAmount,
+                                paymentMethod:
+                                    isPaymentMethod ? 'Point' : 'Transfer Bank',
+                                status: isPaymentMethod
+                                    ? 'Payment success'
+                                    : 'Waiting for payment',
+                              );
+
+                              // Save the transaction history to Firestore
+                              await transactionRef
+                                  .set(transactionHistory.toMap());
+
+                              Get.back(); // Show a success message or navigate to another screen
+                            } catch (error) {
+                              print('Error saving transaction: $error');
+                              // Show an error message or handle the error accordingly
+                            }
+                            Get.offAll(ConfirmPayment());
                           },
                           sliderButtonIconPadding: 16,
                           child: Container(
@@ -1189,13 +1265,16 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
 class ProductItemTile extends StatelessWidget {
   final String productId;
   final int quantity;
+  final String image;
   final double productPrice;
 
   ProductItemTile({
+    Key? key,
     required this.productId,
     required this.quantity,
+    required this.image,
     required this.productPrice,
-  });
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

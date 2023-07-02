@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -38,6 +39,10 @@ class _SignUpState extends State<SignUp> {
         // Update the display name in Firebase.
         await user.updateProfile(displayName: username);
         await user.reload();
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .set({'Point': 0}, SetOptions(merge: true));
         Navigator.pop(context);
         // Display a success message using GetX.
         Get.snackbar(
@@ -125,6 +130,10 @@ class _SignUpState extends State<SignUp> {
         await _auth.signInWithCredential(credential);
     final User? user = authResult.user;
     if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .set({'Point': 0}, SetOptions(merge: true));
       Get.offAll(HomePage());
       Get.snackbar(
         'Success',

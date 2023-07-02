@@ -89,7 +89,8 @@ class _ProductPageState extends State<ProductPage> {
         'productId': widget.productId,
         'quantity': quantity,
         'price': productPrice,
-        'product': productData['title']
+        'product': productData['title'],
+        'image': productData['images'],
       };
 
       if (isAddedToCart) {

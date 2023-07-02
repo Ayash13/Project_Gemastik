@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:project_gemastik/Admin/booksPage.dart';
 import 'package:project_gemastik/Admin/marketPlace.dart';
 import 'package:project_gemastik/Admin/trashPickup.dart';
+import 'package:project_gemastik/discover.dart';
+import 'package:project_gemastik/homepage.dart';
 
 class AdminMainPage extends StatefulWidget {
   const AdminMainPage({Key? key}) : super(key: key);
@@ -158,27 +161,54 @@ class WelcomeWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Container(
-        height: 40,
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-          color: Color.fromARGB(176, 126, 186, 148),
-          border: Border.all(
-            width: 1.5,
-            color: Colors.black,
-          ),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Center(
-          child: Text(
-            'Welcome Admin',
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: const Color.fromARGB(255, 20, 20, 20),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Get.offAll(DiscoverPage());
+            },
+            child: Container(
+              height: 40,
+              width: 70,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(160, 249, 135, 127),
+                border: Border.all(
+                  width: 1.5,
+                  color: Colors.black,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.logout_outlined),
             ),
           ),
-        ),
+          SizedBox(
+            width: 20,
+          ),
+          Expanded(
+            child: Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Color.fromARGB(160, 255, 219, 153),
+                border: Border.all(
+                  width: 1.5,
+                  color: Colors.black,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Center(
+                child: Text(
+                  'Welcome Admin',
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: const Color.fromARGB(255, 20, 20, 20),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

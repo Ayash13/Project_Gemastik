@@ -90,55 +90,66 @@ class _FavoriteItemListState extends State<FavoriteItemList> {
           );
         }
         return Scaffold(
-          appBar: AppBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            scrolledUnderElevation: 0,
-            leadingWidth: 75,
-            leading: GestureDetector(
-              onTap: () {
-                Navigator.pop(context);
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: 20),
-                height: 40,
-                width: 40,
-                decoration: BoxDecoration(
-                  border: Border.all(width: 2, color: Colors.black),
-                  borderRadius: BorderRadius.circular(30),
-                  color: Color.fromARGB(255, 140, 203, 255),
+          body: Container(
+            color: Color.fromARGB(210, 241, 205, 205),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 30, bottom: 10, left: 20, right: 20),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          height: 50,
+                          width: 50,
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 2, color: Colors.black),
+                            borderRadius: BorderRadius.circular(30),
+                            color: Color.fromARGB(255, 140, 203, 255),
+                          ),
+                          child: Icon(MdiIcons.arrowLeft),
+                        ),
+                      ),
+                      Text(
+                        'Your Favorite',
+                        style: GoogleFonts.poppins(
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: const Color.fromARGB(255, 20, 20, 20),
+                        ),
+                      ),
+                      SizedBox(
+                        width: 50,
+                      )
+                    ],
+                  ),
                 ),
-                child: Icon(MdiIcons.arrowLeft),
-              ),
-            ),
-            title: Text(
-              'Favorite',
-              style: GoogleFonts.poppins(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-                color: const Color.fromARGB(255, 20, 20, 20),
-              ),
-            ),
-            centerTitle: true,
-            actions: [
-              SizedBox(width: 40),
-            ],
-          ),
-          body: ListView.builder(
-            itemCount: favoriteItems.length,
-            itemBuilder: (context, index) {
-              final favoriteItem = favoriteItems[index];
-              final productId = favoriteItem['productId'] ?? '';
-              final productPrice = favoriteItem['price'] ?? 0;
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: favoriteItems.length,
+                    itemBuilder: (context, index) {
+                      final favoriteItem = favoriteItems[index];
+                      final productId = favoriteItem['productId'] ?? '';
+                      final productPrice = favoriteItem['price'] ?? 0;
 
-              final FavoriteItemTile favoriteItemTile = FavoriteItemTile(
-                productId: productId,
-                productPrice: productPrice,
-                removeFromFavorite: () => removeFromFavorite(productId),
-              );
+                      final FavoriteItemTile favoriteItemTile =
+                          FavoriteItemTile(
+                        productId: productId,
+                        productPrice: productPrice,
+                        removeFromFavorite: () => removeFromFavorite(productId),
+                      );
 
-              return favoriteItemTile;
-            },
+                      return favoriteItemTile;
+                    },
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },
@@ -207,9 +218,9 @@ class FavoriteItemTile extends StatelessWidget {
           },
           child: Container(
             margin: EdgeInsets.only(
-              top: 20,
               left: 20,
               right: 20,
+              bottom: 20,
             ),
             decoration: BoxDecoration(
               border: Border.all(width: 2, color: Colors.black),

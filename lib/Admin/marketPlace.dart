@@ -213,7 +213,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                               child: Container(
                                 margin: EdgeInsets.only(top: 10),
                                 width: MediaQuery.of(context).size.width,
-                                height: 200,
+                                height: 300,
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(15),
                                   color: Colors.white,
@@ -229,7 +229,7 @@ class _MarketPlaceState extends State<MarketPlace> {
                           else
                             CarouselSlider(
                               options: CarouselOptions(
-                                height: 200,
+                                height: 300,
                                 enableInfiniteScroll: false,
                                 viewportFraction: 1.0,
                                 onPageChanged: (index, reason) {
@@ -578,97 +578,80 @@ class _MarketPlaceState extends State<MarketPlace> {
                       return GestureDetector(
                         onLongPress: () => _showDeleteConfirmationDialog(
                             document.reference, imageUrls),
-                        child: Dismissible(
-                          key: Key(document.id),
-                          onDismissed: (_) =>
-                              _deleteProduct(document.reference, imageUrls),
-                          direction: DismissDirection.endToStart,
-                          background: Container(
-                            alignment: Alignment.centerRight,
-                            color: Colors.red,
-                            padding: EdgeInsets.symmetric(horizontal: 16.0),
-                            child: Icon(
-                              Icons.delete,
-                              color: Colors.white,
-                            ),
+                        child: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1.5, color: Colors.black),
+                            borderRadius: BorderRadius.circular(10),
+                            color: Color.fromARGB(255, 194, 225, 251),
                           ),
-                          child: Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            decoration: BoxDecoration(
-                              border:
-                                  Border.all(width: 1.5, color: Colors.black),
-                              borderRadius: BorderRadius.circular(10),
-                              color: Color.fromARGB(255, 194, 225, 251),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: 100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(10),
-                                        color: Colors.white,
-                                        border: Border.all(
-                                          width: 1.5,
-                                          color: Colors.black,
-                                        ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    height: 100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(10),
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        width: 1.5,
+                                        color: Colors.black,
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Image.network(
-                                          imageUrls[0],
-                                          fit: BoxFit.cover,
-                                        ),
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(10),
+                                      child: Image.network(
+                                        imageUrls[0],
+                                        fit: BoxFit.cover,
                                       ),
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 10),
-                                Expanded(
-                                  flex: 2,
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        title,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
-                                        ),
+                              ),
+                              SizedBox(width: 10),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      title,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
                                       ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        description,
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
-                                        ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      description,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
                                       ),
-                                      SizedBox(height: 5),
-                                      Text(
-                                        'Rp ${price.toStringAsFixed(0)}',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
-                                        ),
+                                    ),
+                                    SizedBox(height: 5),
+                                    Text(
+                                      'Rp ${price.toStringAsFixed(0)}',
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 15,
+                                        fontWeight: FontWeight.bold,
+                                        color: const Color.fromARGB(
+                                            255, 20, 20, 20),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
                         ),
                       );

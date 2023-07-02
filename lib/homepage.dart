@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
             : selectedIndex == 1
                 ? Color.fromARGB(193, 255, 248, 235)
                 : selectedIndex == 2
-                    ? Color.fromARGB(210, 241, 205, 205)
+                    ? Color.fromARGB(255, 255, 239, 239)
                     : Colors.transparent,
         child: Padding(
           padding: const EdgeInsets.only(
@@ -233,14 +233,14 @@ class _HomePageLayoutState extends State<HomePageLayout> {
                     onTap: () {
                       Get.to(
                         NotifiCation(),
-                        transition: Transition.leftToRight,
+                        transition: Transition.topLevel,
                         duration: Duration(milliseconds: 300),
                       );
                     },
                     child: itemAppBar(
                       iconbarColor: Color.fromARGB(160, 126, 186, 148),
                       iconbar: Icon(
-                        Icons.notifications_outlined,
+                        MdiIcons.history,
                         color: Colors.black,
                       ),
                     ),
