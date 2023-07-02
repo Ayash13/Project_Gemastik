@@ -25,10 +25,14 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
   int quantity = 1;
   double totalAmount = 0.0;
   Map<String, dynamic>? userAddresses;
+  String receiptNumber = 'No receipt number yet';
+  String deliveryStatus = 'Please wait to delivery';
   String? phoneNumber;
+  String proofImage = '';
   //false = trasfer bank
   //true = credit card
   bool isPaymentMethod = false;
+
   @override
   void initState() {
     super.initState();
@@ -58,7 +62,10 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
 
         addressesSnapshot.docs.forEach((doc) {
           final addressData = doc.data();
-          if (addressData.containsKey('title')) {
+          if (addressData.containsKey('title') &&
+              addressData.containsKey('roadNumber') &&
+              addressData.containsKey('city') &&
+              addressData.containsKey('province')) {
             setState(() {
               userAddresses![doc.id] = addressData;
             });
@@ -1157,11 +1164,25 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                 return; // User is not signed in, handle accordingly
                               }
 
+                              await fetchAddresses();
+
                               final userRef = FirebaseFirestore.instance
                                   .collection('users')
                                   .doc(currentUser.uid);
+                              final addressTitle =
+                                  userAddresses!.values.first['title'];
+                              final addressRoadNumber =
+                                  userAddresses!.values.first['roadNumber'];
+                              final addressCity =
+                                  userAddresses!.values.first['city'];
+                              final addressProvince =
+                                  userAddresses!.values.first['province'];
                               final transactionData = {
-                                'address': userAddresses,
+                                'proofImage': proofImage,
+                                'addressTitle': addressTitle,
+                                'addressRoadNumber': addressRoadNumber,
+                                'addressCity': addressCity,
+                                'addressProvince': addressProvince,
                                 'name': FirebaseAuth
                                         .instance.currentUser?.displayName ??
                                     '',
@@ -1180,6 +1201,8 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                 'status': isPaymentMethod
                                     ? 'Payment success'
                                     : 'Waiting for payment',
+                                'deliveryStatus': deliveryStatus,
+                                'receiptNumber': receiptNumber,
                               };
 
                               if (isPaymentMethod) {
@@ -1199,12 +1222,18 @@ class _CheckoutCartScreenState extends State<CheckoutCartScreen> {
                                   userRef.collection('transactions').doc();
                               final transactionId = transactionRef.id;
                               transactionData['id'] = transactionId;
-
+                              await fetchAddresses();
                               await transactionRef.set(transactionData);
 
                               final transactionHistory = TransactionHistory(
+                                proofImage: proofImage,
+                                receiptNumber: receiptNumber,
+                                deliveryStatus: deliveryStatus,
                                 id: transactionId,
-                                address: userAddresses as List<dynamic>,
+                                addressCity: addressCity,
+                                addressProvince: addressProvince,
+                                addressRoadNumber: addressRoadNumber,
+                                addressTitle: addressTitle,
                                 name: FirebaseAuth
                                         .instance.currentUser?.displayName ??
                                     '',

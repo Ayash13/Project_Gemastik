@@ -232,27 +232,17 @@ class _BookPageState extends State<BookPage> {
                                                           fit: BoxFit.cover,
                                                         ),
                                                       ),
-                                                      const SizedBox(
-                                                          height: 10),
-                                                      Flex(
-                                                        direction:
-                                                            Axis.vertical,
-                                                        children: [
-                                                          Text(
-                                                            title,
-                                                            style: GoogleFonts
-                                                                .poppins(
-                                                              fontSize: 10,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              color:
-                                                                  Colors.black,
-                                                            ),
-                                                            textAlign: TextAlign
-                                                                .center,
-                                                          ),
-                                                        ],
+                                                      Text(
+                                                        title,
+                                                        style:
+                                                            GoogleFonts.poppins(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color: Colors.black,
+                                                        ),
+                                                        textAlign:
+                                                            TextAlign.center,
                                                       ),
                                                       const SizedBox(
                                                           height: 10),
@@ -335,6 +325,8 @@ class _BookPageState extends State<BookPage> {
                                                     MainAxisAlignment.center,
                                                 children: [
                                                   Container(
+                                                    width: 150,
+                                                    height: 195,
                                                     clipBehavior: Clip
                                                         .antiAliasWithSaveLayer,
                                                     decoration: BoxDecoration(
@@ -344,8 +336,6 @@ class _BookPageState extends State<BookPage> {
                                                     ),
                                                     child: Image.network(
                                                       coverImageUrl,
-                                                      width: 150,
-                                                      height: 195,
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),

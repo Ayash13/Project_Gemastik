@@ -38,42 +38,9 @@ class _InvoicePageState extends State<InvoicePage> {
     }
   }
 
-  Map<String, dynamic>? userAddresses;
   @override
   void initState() {
     super.initState();
-    fetchAddresses();
-  }
-
-  Future<void> fetchAddresses() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (userDoc.exists) {
-        final addressesSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('addresses')
-            .get();
-
-        setState(() {
-          userAddresses = {};
-        });
-
-        addressesSnapshot.docs.forEach((doc) {
-          final addressData = doc.data();
-          if (addressData.containsKey('title')) {
-            setState(() {
-              userAddresses![doc.id] = addressData;
-            });
-          }
-        });
-      }
-    }
   }
 
   Future<void> saveImage(Uint8List bytes) async {
@@ -349,7 +316,15 @@ class _InvoicePageState extends State<InvoicePage> {
                   if (_image != null) {
                     final transactionData = {
                       'id': widget.transactionHistory.id,
-                      'address': userAddresses,
+                      'deliveryStatus':
+                          widget.transactionHistory.deliveryStatus,
+                      'receiptNumber': widget.transactionHistory.receiptNumber,
+                      'addressTitle': widget.transactionHistory.addressTitle,
+                      'addressRoadNumber':
+                          widget.transactionHistory.addressRoadNumber,
+                      'addressCity': widget.transactionHistory.addressCity,
+                      'addressProvince':
+                          widget.transactionHistory.addressProvince,
                       'name':
                           FirebaseAuth.instance.currentUser?.displayName ?? '',
                       'email': FirebaseAuth.instance.currentUser?.email ?? '',
@@ -361,8 +336,9 @@ class _InvoicePageState extends State<InvoicePage> {
                       'shippingPrice': 0,
                       'totalPrice': widget.transactionHistory.totalPrice,
                       'paymentMethod': widget.transactionHistory.paymentMethod,
-                      'status': widget.transactionHistory.status
+                      'status': widget.transactionHistory.status,
                     };
+
                     final User? currentUser = FirebaseAuth.instance.currentUser;
                     final userTransactionsRef = FirebaseFirestore.instance
                         .collection('users')
@@ -375,17 +351,22 @@ class _InvoicePageState extends State<InvoicePage> {
                         .then((_) {
                       final storageRef = FirebaseStorage.instance.ref().child(
                           'transaction_images/${widget.transactionHistory.id}.jpg');
-                      storageRef.putFile(_image!).then((_) {
+
+                      storageRef
+                          .putFile(_image!)
+                          .then((TaskSnapshot snapshot) async {
+                        final imageUrl = await snapshot.ref.getDownloadURL();
+
                         userTransactionsRef
                             .doc(widget.transactionHistory.id)
                             .update({
                           'status': 'Payment success',
-                          'proofImage': storageRef.fullPath,
+                          'proofImage': imageUrl,
                         }).then((_) {
                           Navigator.pop(context);
                           Get.snackbar(
                             'Success',
-                            'Please wait for us to verivy your payment',
+                            'Please wait for us to verify your payment',
                             snackPosition: SnackPosition.TOP,
                             backgroundColor: Color.fromARGB(240, 126, 186, 148),
                             colorText: Colors.black,
@@ -566,7 +547,7 @@ class _InvoicePageState extends State<InvoicePage> {
                           ),
                           Text(
                             //address title
-                            '${userAddresses?.values.first['title'] ?? ""}',
+                            widget.transactionHistory.addressTitle,
                             style: GoogleFonts.sourceCodePro(
                               fontSize: 15,
                               fontWeight: FontWeight.w600,

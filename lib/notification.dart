@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+
 import 'package:project_gemastik/invoice.dart';
 
 class NotifiCation extends StatefulWidget {
@@ -33,7 +34,6 @@ class _NotifiCationState extends State<NotifiCation> {
 }
 
 class TransactionHistory {
-  final List<dynamic> address;
   final String id;
   final String name;
   final String email;
@@ -46,9 +46,15 @@ class TransactionHistory {
   final double totalPrice;
   final String paymentMethod;
   final String status;
+  final String deliveryStatus;
+  final String receiptNumber;
+  final String proofImage;
+  final String addressCity;
+  final String addressProvince;
+  final String addressRoadNumber;
+  final String addressTitle;
 
   TransactionHistory({
-    required this.address,
     required this.id,
     required this.name,
     required this.email,
@@ -61,12 +67,25 @@ class TransactionHistory {
     required this.totalPrice,
     required this.paymentMethod,
     required this.status,
+    required this.deliveryStatus,
+    required this.receiptNumber,
+    required this.proofImage,
+    required this.addressCity,
+    required this.addressProvince,
+    required this.addressRoadNumber,
+    required this.addressTitle,
   });
 
   factory TransactionHistory.fromMap(Map<String, dynamic> map) {
     return TransactionHistory(
+      addressProvince: map['addressProvince'],
+      addressCity: map['addressCity'],
+      addressRoadNumber: map['addressRoadNumber'],
+      addressTitle: map['addressTitle'],
       id: map['id'],
-      address: List<dynamic>.from(['address']),
+      deliveryStatus: map['deliveryStatus'],
+      proofImage: map['proofImage'],
+      receiptNumber: map['receiptNumber'],
       name: map['name'],
       email: map['email'],
       phone: map['phone'],
@@ -83,6 +102,14 @@ class TransactionHistory {
 
   Map<String, dynamic> toMap() {
     return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'status': status,
+      'deliveryStatus': deliveryStatus,
+      'receiptNumber': receiptNumber,
+      'proofImage': proofImage,
       'time': time,
       'date': date,
       'month': month,
@@ -90,6 +117,10 @@ class TransactionHistory {
       'shippingPrice': shippingPrice,
       'totalPrice': totalPrice,
       'paymentMethod': paymentMethod,
+      'addressProvince': addressProvince,
+      'addressCity': addressCity,
+      'addressRoadNumber': addressRoadNumber,
+      'addressTitle': addressTitle,
     };
   }
 }
@@ -659,6 +690,53 @@ class _TransactionHistoryScreenState extends State<TransactionHistoryScreen> {
                                                 }).toList(),
                                               ),
                                             ),
+                                          ),
+                                          Divider(
+                                            thickness: 2,
+                                            color: Colors.black,
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Delivery status : ',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                              Text(
+                                                transaction.deliveryStatus,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Text(
+                                                'Receipt number : ',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w700,
+                                                ),
+                                              ),
+                                              Text(
+                                                transaction.receiptNumber,
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           Padding(
                                             padding: const EdgeInsets.all(15.0),

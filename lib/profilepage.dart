@@ -898,9 +898,9 @@ class _ProfilePageState extends State<ProfilePage> {
                                 snapshot.data!.data()!['Point'];
                             int pointValue = pointValueDouble.toInt();
 
-                            return Column(
-                              children: [
-                                Text(
+                            return Expanded(
+                              child: SizedBox(
+                                child: Text(
                                   pointValue.toString(),
                                   style: GoogleFonts.poppins(
                                     fontSize: 60,
@@ -909,7 +909,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                         const Color.fromARGB(255, 20, 20, 20),
                                   ),
                                 ),
-                              ],
+                              ),
                             );
                           }
 
@@ -935,19 +935,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                       ),
-                      Expanded(
-                        child: Container(
-                          height: MediaQuery.of(context).size.height,
-                          width: MediaQuery.of(context).size.width,
-                          color: Color.fromARGB(255, 140, 203, 255),
-                          child: Center(
-                            child: Text(
-                              'Your Point',
-                              style: GoogleFonts.poppins(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                                color: const Color.fromARGB(255, 20, 20, 20),
-                              ),
+                      Container(
+                        height: 70,
+                        width: MediaQuery.of(context).size.width,
+                        color: Color.fromARGB(255, 140, 203, 255),
+                        child: Center(
+                          child: Text(
+                            'Your Point',
+                            style: GoogleFonts.poppins(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: const Color.fromARGB(255, 20, 20, 20),
                             ),
                           ),
                         ),

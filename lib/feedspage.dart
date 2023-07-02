@@ -189,9 +189,6 @@ class _FeedsPageState extends State<FeedsPage> {
                 ],
               ),
             ),
-            SizedBox(
-              height: 10,
-            ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -211,48 +208,45 @@ class _FeedsPageState extends State<FeedsPage> {
 
                     sortedProducts =
                         sortProducts(filteredProducts, selectedOption);
-                    final productChunks = chunkList(sortedProducts!, 2.1);
+                    final productChunks = chunkList(sortedProducts!, 2.0);
                     // Use sorted products
 
                     return ListView.builder(
-                      padding: EdgeInsets.only(top: 0),
                       physics: AlwaysScrollableScrollPhysics(),
                       itemCount: productChunks.length,
                       itemBuilder: (context, index) {
                         return Padding(
-                          padding: const EdgeInsets.only(left: 15, right: 15),
-                          child: Column(
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: productChunks[index].map((document) {
-                                  final data =
-                                      document.data() as Map<String, dynamic>;
-                                  final List<dynamic> imageUrls =
-                                      document['images'] ?? [];
+                          padding: const EdgeInsets.only(
+                            left: 20,
+                            right: 20,
+                            bottom: 14,
+                          ),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 15,
+                              childAspectRatio: 0.55,
+                            ),
+                            itemCount: productChunks[index].length,
+                            itemBuilder: (context, gridIndex) {
+                              final document = productChunks[index][gridIndex];
+                              final data =
+                                  document.data() as Map<String, dynamic>;
+                              final List<dynamic> imageUrls =
+                                  document['images'] ?? [];
+                              final productId = document.id;
 
-                                  final productId = document.id;
-
-                                  return Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        left: 5,
-                                        right: 5,
-                                      ),
-                                      child: ProductContainer(
-                                        productId: productId,
-                                        productName: data['title'],
-                                        description: data['description'],
-                                        price: data['price'],
-                                        imageUrls: imageUrls,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                              SizedBox(height: 10), // Add gap between rows
-                            ],
+                              return ProductContainer(
+                                productId: productId,
+                                productName: data['title'],
+                                description: data['description'],
+                                price: data['price'],
+                                imageUrls: imageUrls,
+                              );
+                            },
                           ),
                         );
                       },
@@ -407,7 +401,6 @@ class ProductContainer extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(height: 10),
               ],
             ),
           ),

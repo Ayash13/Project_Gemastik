@@ -36,12 +36,23 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     }
   }
 
-  Map<String, dynamic>? userAddresses;
   @override
   void initState() {
     super.initState();
-    fetchAddresses();
   }
+
+  Future<void> saveImage(Uint8List bytes) async {
+    await [Permission.storage].request();
+    final time = DateTime.now()
+        .toIso8601String()
+        .replaceAll('.', '_')
+        .replaceAll(':', '_');
+    final name = 'invoice_$time';
+    final result = await ImageGallerySaver.saveImage(bytes, name: name);
+    return result['filepath'];
+  }
+
+  Uint8List? bytes;
 
   Stream<DocumentSnapshot<Map<String, dynamic>>>? getLatestTransaction() {
     final currentUser = FirebaseAuth.instance.currentUser;
@@ -62,49 +73,6 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         .map((snapshot) => snapshot.docs.first);
   }
 
-  Future<void> fetchAddresses() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      final userDoc = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
-
-      if (userDoc.exists) {
-        final addressesSnapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user.uid)
-            .collection('addresses')
-            .get();
-
-        setState(() {
-          userAddresses = {};
-        });
-
-        addressesSnapshot.docs.forEach((doc) {
-          final addressData = doc.data();
-          if (addressData.containsKey('title')) {
-            setState(() {
-              userAddresses![doc.id] = addressData;
-            });
-          }
-        });
-      }
-    }
-  }
-
-  Future<void> saveImage(Uint8List bytes) async {
-    await [Permission.storage].request();
-    final time = DateTime.now()
-        .toIso8601String()
-        .replaceAll('.', '_')
-        .replaceAll(':', '_');
-    final name = 'invoice_$time';
-    final result = await ImageGallerySaver.saveImage(bytes, name: name);
-    return result['filepath'];
-  }
-
-  Uint8List? bytes;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -392,7 +360,15 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                           if (_image != null) {
                             final transactionData = {
                               'id': transactionHistory.id,
-                              'address': userAddresses,
+                              'deliveryStatus':
+                                  transactionHistory.deliveryStatus,
+                              'receiptNumber': transactionHistory.receiptNumber,
+                              'addressTitle': transactionHistory.addressTitle,
+                              'addressRoadNumber':
+                                  transactionHistory.addressRoadNumber,
+                              'addressCity': transactionHistory.addressCity,
+                              'addressProvince':
+                                  transactionHistory.addressProvince,
                               'name': FirebaseAuth
                                       .instance.currentUser?.displayName ??
                                   '',
@@ -407,8 +383,10 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                               'shippingPrice': 0,
                               'totalPrice': transactionHistory.totalPrice,
                               'paymentMethod': transactionHistory.paymentMethod,
-                              'status': transactionHistory.status
+                              'status': transactionHistory.status,
+                              'proofImage': transactionHistory.proofImage,
                             };
+
                             final User? currentUser =
                                 FirebaseAuth.instance.currentUser;
                             final userTransactionsRef = FirebaseFirestore
@@ -425,17 +403,23 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                                   .ref()
                                   .child(
                                       'transaction_images/${transactionHistory.id}.jpg');
-                              storageRef.putFile(_image!).then((_) {
+
+                              storageRef
+                                  .putFile(_image!)
+                                  .then((TaskSnapshot snapshot) async {
+                                final imageUrl =
+                                    await snapshot.ref.getDownloadURL();
+
                                 userTransactionsRef
                                     .doc(transactionHistory.id)
                                     .update({
                                   'status': 'Payment success',
-                                  'proofImage': storageRef.fullPath,
+                                  'proofImage': imageUrl,
                                 }).then((_) {
                                   Navigator.pop(context);
                                   Get.snackbar(
                                     'Success',
-                                    'Please wait for us to verivy your payment',
+                                    'Please wait for us to verify your payment',
                                     snackPosition: SnackPosition.TOP,
                                     backgroundColor:
                                         Color.fromARGB(240, 126, 186, 148),
@@ -637,7 +621,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
                               ),
                               Text(
                                 //address title
-                                '${userAddresses?.values.first['title'] ?? ""}',
+                                transactionHistory.addressTitle,
                                 style: GoogleFonts.sourceCodePro(
                                   fontSize: 15,
                                   fontWeight: FontWeight.w600,
