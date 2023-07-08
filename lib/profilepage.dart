@@ -899,7 +899,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             int pointValue = pointValueDouble.toInt();
 
                             return Expanded(
-                              child: SizedBox(
+                              child: Center(
                                 child: Text(
                                   pointValue.toString(),
                                   style: GoogleFonts.poppins(

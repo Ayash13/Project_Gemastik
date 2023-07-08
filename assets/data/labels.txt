@@ -1,2 +1,9 @@
-0 Recycleable
-1 Non-Recycleable
+0 Glass
+1 Plastic
+2 Paper
+3 Metal
+4 CardBoard
+5 Battery
+6 Organic
+7 Electronic
+8 Medic

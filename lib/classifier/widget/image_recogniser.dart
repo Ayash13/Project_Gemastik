@@ -190,7 +190,7 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
 
     final resultCategory = await _classifier.predict(imageInput, context);
 
-    final result = resultCategory.score >= 0.8
+    final result = resultCategory.score >= 0.6
         ? _ResultStatus.found
         : _ResultStatus.notFound;
     final imageLabel = resultCategory.label;
@@ -207,11 +207,13 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
 
   Widget _buildResultView() {
     var title = '';
+    var isRecyclable = false;
 
     if (_resultStatus == _ResultStatus.notFound) {
       title = 'Fail to recognize';
     } else if (_resultStatus == _ResultStatus.found) {
       title = _imageLabel;
+      isRecyclable = _isRecyclableLabel(_imageLabel);
     } else {
       title = 'No result yet';
     }
@@ -225,14 +227,24 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
 
     return Column(
       children: [
-        Text(
-          title,
-          style: GoogleFonts.poppins(
-            fontSize: 25,
-            fontWeight: FontWeight.bold,
-            color: const Color.fromARGB(255, 20, 20, 20),
+        if (_resultStatus == _ResultStatus.found)
+          Text(
+            isRecyclable ? 'Recyclable' : 'Non Recyclable',
+            style: GoogleFonts.poppins(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 20, 20, 20),
+            ),
+          )
+        else
+          Text(
+            title,
+            style: GoogleFonts.poppins(
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 20, 20, 20),
+            ),
           ),
-        ),
         const SizedBox(height: 10),
         Text(
           accuracyLabel,
@@ -243,5 +255,16 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
         ),
       ],
     );
+  }
+
+  bool _isRecyclableLabel(String label) {
+    final recyclableLabels = [
+      'Glass',
+      'Plastic',
+      'Paper',
+      'Metal',
+      'Cardboard'
+    ];
+    return recyclableLabels.contains(label);
   }
 }

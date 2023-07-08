@@ -41,7 +41,6 @@ class _TransactionPageState extends State<TransactionPage> {
             left: 20,
             right: 20,
             top: 30,
-            bottom: 20,
           ),
           child: Column(
             children: [
@@ -584,7 +583,26 @@ class _TransactionPageState extends State<TransactionPage> {
                                                 transaction.receiptNumber;
 
                                             return AlertDialog(
-                                              title: Text('Update Details'),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(40),
+                                                side: BorderSide(
+                                                    width: 1.5,
+                                                    color: Colors.black),
+                                              ),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 255, 251, 235),
+                                              title: Center(
+                                                child: Text(
+                                                  'Update Transaction Status',
+                                                  style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: const Color.fromARGB(
+                                                        255, 20, 20, 20),
+                                                  ),
+                                                ),
+                                              ),
                                               content: Column(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
@@ -611,25 +629,62 @@ class _TransactionPageState extends State<TransactionPage> {
                                                 ],
                                               ),
                                               actions: [
-                                                TextButton(
-                                                  child: Text('Cancel'),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.black,
+                                                      width: 1.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Color.fromARGB(
+                                                        193, 225, 156, 156),
+                                                  ),
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: Text(
+                                                      'Cancel',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                  ),
                                                 ),
-                                                TextButton(
-                                                  child: Text('Update'),
-                                                  onPressed: () {
-                                                    //update function
-                                                    updateTransactionDetails(
-                                                      userId!,
-                                                      transaction.id,
-                                                      updatedDeliveryStatus,
-                                                      updatedReceiptNumber,
-                                                    );
-                                                    Navigator.of(context)
-                                                        .pop(); // Close the dialog.
-                                                  },
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: Colors.black,
+                                                      width: 1.5,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10),
+                                                    color: Color.fromARGB(
+                                                        150, 126, 186, 148),
+                                                  ),
+                                                  child: TextButton(
+                                                    child: Text(
+                                                      'Update',
+                                                      style: TextStyle(
+                                                        color: Colors.black,
+                                                      ),
+                                                    ),
+                                                    onPressed: () {
+                                                      //update function
+                                                      updateTransactionDetails(
+                                                        userId!,
+                                                        transaction.id,
+                                                        updatedDeliveryStatus,
+                                                        updatedReceiptNumber,
+                                                      );
+                                                      Navigator.of(context)
+                                                          .pop(); // Close the dialog.
+                                                    },
+                                                  ),
                                                 ),
                                               ],
                                             );

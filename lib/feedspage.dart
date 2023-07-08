@@ -189,6 +189,9 @@ class _FeedsPageState extends State<FeedsPage> {
                 ],
               ),
             ),
+            SizedBox(
+              height: 10,
+            ),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: FirebaseFirestore.instance
@@ -219,7 +222,7 @@ class _FeedsPageState extends State<FeedsPage> {
                           padding: const EdgeInsets.only(
                             left: 20,
                             right: 20,
-                            bottom: 14,
+                            bottom: 15,
                           ),
                           child: GridView.builder(
                             shrinkWrap: true,
@@ -227,8 +230,8 @@ class _FeedsPageState extends State<FeedsPage> {
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                               crossAxisCount: 2,
+                              mainAxisExtent: 310,
                               crossAxisSpacing: 15,
-                              childAspectRatio: 0.55,
                             ),
                             itemCount: productChunks[index].length,
                             itemBuilder: (context, gridIndex) {
@@ -322,89 +325,85 @@ class ProductContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-        onTap: () {
-          // Navigate to the product page when tapped
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => ProductPage(
-                  productId: productId), // Pass the product ID or other details
-            ),
-          );
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color.fromARGB(255, 194, 225, 251),
-            border: Border.all(
-              width: 1.5,
-              color: Colors.black,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.only(left: 10, right: 10),
-            child: Column(
-              children: [
-                SizedBox(height: 10),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: 150,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    border: Border.all(
-                      width: 1.5,
-                      color: Colors.black,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Image.network(
-                      imageUrls[0],
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    productName,
-                    style: GoogleFonts.poppins(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      color: const Color.fromARGB(255, 20, 20, 20),
-                    ),
-                    textAlign: TextAlign.left,
-                  ),
-                ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    description,
-                    maxLines: 3,
-                    overflow: TextOverflow.ellipsis,
-                    style: GoogleFonts.poppins(
-                      fontSize: 15,
-                      color: const Color.fromARGB(255, 20, 20, 20),
-                    ),
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    '\Rp ${price.toStringAsFixed(0)}',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
+      onTap: () {
+        // Navigate to the product page when tapped
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ProductPage(
+              productId: productId,
             ),
           ),
-        ));
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Color.fromARGB(255, 194, 225, 251),
+          border: Border.all(
+            width: 1.5,
+            color: Colors.black,
+          ),
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 10, right: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 10),
+              Container(
+                height: 150,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(
+                    width: 1.5,
+                    color: Colors.black,
+                  ),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(15),
+                  child: Image.network(
+                    imageUrls[0],
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                productName,
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: const Color.fromARGB(255, 20, 20, 20),
+                ),
+                textAlign: TextAlign.left,
+              ),
+              Flexible(
+                child: Text(
+                  description,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: GoogleFonts.poppins(
+                    fontSize: 15,
+                    color: const Color.fromARGB(255, 20, 20, 20),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                '\Rp ${price.toStringAsFixed(0)}',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }
 

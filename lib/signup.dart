@@ -42,8 +42,9 @@ class _SignUpState extends State<SignUp> {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(user.uid)
-            .set({'Point': 0}, SetOptions(merge: true));
+            .set({'Point': 0.0}, SetOptions(merge: true));
         Navigator.pop(context);
+
         // Display a success message using GetX.
         Get.snackbar(
           'Success',
@@ -133,7 +134,7 @@ class _SignUpState extends State<SignUp> {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(user.uid)
-          .set({'Point': 0}, SetOptions(merge: true));
+          .set({'Point': 0.0}, SetOptions(merge: true));
       Get.offAll(HomePage());
       Get.snackbar(
         'Success',
