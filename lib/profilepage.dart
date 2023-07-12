@@ -802,10 +802,10 @@ class _ProfilePageState extends State<ProfilePage> {
                           backgroundImage: NetworkImage(
                               FirebaseAuth.instance.currentUser!.photoURL!),
                         )
-                      : Icon(
-                          Icons.person_rounded,
-                          size: 100,
-                          color: Colors.black,
+                      : CircleAvatar(
+                          radius: 0.375 * 300,
+                          backgroundImage:
+                              AssetImage('assets/image/avatar.png'),
                         ),
                 ),
               ),
@@ -854,264 +854,101 @@ class _ProfilePageState extends State<ProfilePage> {
               height: 20,
             ),
             Expanded(
-              child: Container(
-                height: MediaQuery.of(context).size.height,
-                width: MediaQuery.of(context).size.width,
-                margin: EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                ),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    side: BorderSide(
-                      color: Colors.black,
-                      width: 2,
-                    ),
-                  ),
-                  elevation: 0,
-                  color: Colors.white,
-                  clipBehavior: Clip.antiAliasWithSaveLayer,
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: 20,
-                      ),
-                      StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
-                        stream: FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(FirebaseAuth.instance.currentUser!.uid)
-                            .snapshots(),
-                        builder: (BuildContext context,
-                            AsyncSnapshot<
-                                    DocumentSnapshot<Map<String, dynamic>>>
-                                snapshot) {
-                          if (snapshot.hasError) {
-                            return Text('Error: ${snapshot.error}');
-                          }
-
-                          // Check if the document exists and contains the 'Point' field
-                          if (snapshot.hasData &&
-                              snapshot.data!.exists &&
-                              snapshot.data!.data()!.containsKey('Point')) {
-                            double pointValueDouble =
-                                snapshot.data!.data()!['Point'];
-                            int pointValue = pointValueDouble.toInt();
-
-                            return Expanded(
-                              child: Center(
-                                child: Text(
-                                  pointValue.toString(),
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 60,
-                                    fontWeight: FontWeight.w600,
-                                    color:
-                                        const Color.fromARGB(255, 20, 20, 20),
-                                  ),
-                                ),
-                              ),
-                            );
-                          }
-
-                          // Handle the case when the document doesn't exist or doesn't contain the 'Point' field
-                          return Center(
-                            child: Text('Point not found'),
-                          );
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      Row(
-                        children: List.generate(
-                          155 ~/ 5,
-                          (index) => Expanded(
-                            child: Container(
-                              color: index % 2 == 0
-                                  ? Colors.transparent
-                                  : Colors.black,
-                              height: 2,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        height: 70,
-                        width: MediaQuery.of(context).size.width,
-                        color: Color.fromARGB(255, 140, 203, 255),
-                        child: Center(
-                          child: Text(
-                            'Your Point',
-                            style: GoogleFonts.poppins(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: const Color.fromARGB(255, 20, 20, 20),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            Container(
-              height: 195,
-              width: MediaQuery.of(context).size.width,
-              decoration: BoxDecoration(
-                border: Border.all(width: 2, color: Colors.black),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(40),
-                ),
-                color: Color.fromARGB(155, 255, 232, 188),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(
-                  left: 20,
-                  right: 20,
-                  top: 20,
-                ),
+              child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    GestureDetector(
-                      onTap: () {
-                        if (phoneNumber != null) {
-                          _showDialogPhoneUpdate();
-                        } else {
-                          _showDialogAddPhone();
-                        }
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        decoration: BoxDecoration(
-                          border: Border.all(width: 2, color: Colors.black),
+                    Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width,
+                      margin: EdgeInsets.only(
+                        left: 20,
+                        right: 20,
+                      ),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20),
-                          color: Colors.white,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1.5,
-                                    color: Colors.black,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                  color: Color.fromARGB(179, 252, 119, 42),
-                                ),
-                                child: Icon(
-                                  MdiIcons.phone,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(width: 10),
-                              Container(
-                                height: 40,
-                                width: 2,
-                                color: Colors.black,
-                              ),
-                              SizedBox(width: 10),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Phone Number',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      color:
-                                          const Color.fromARGB(255, 20, 20, 20),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  Text(
-                                    phoneNumber != null
-                                        ? '$phoneNumber'
-                                        : 'Please add phone number',
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color:
-                                          const Color.fromARGB(255, 20, 20, 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Spacer(),
-                              Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1.5,
-                                    color: Colors.black,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Icon(
-                                  phoneNumber != null
-                                      ? Icons.arrow_forward_ios_rounded
-                                      : Icons.add,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              SizedBox(
-                                width: 15,
-                              ),
-                            ],
+                          side: BorderSide(
+                            color: Colors.black,
+                            width: 2,
                           ),
                         ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        border: Border.all(width: 2, color: Colors.black),
-                        borderRadius: BorderRadius.circular(20),
+                        elevation: 0,
                         color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Row(
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: Column(
                           children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                  width: 1.5,
-                                  color: Colors.black,
+                            SizedBox(
+                              height: 20,
+                            ),
+                            StreamBuilder<
+                                DocumentSnapshot<Map<String, dynamic>>>(
+                              stream: FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                                  .snapshots(),
+                              builder: (BuildContext context,
+                                  AsyncSnapshot<
+                                          DocumentSnapshot<
+                                              Map<String, dynamic>>>
+                                      snapshot) {
+                                if (snapshot.hasError) {
+                                  return Text('Error: ${snapshot.error}');
+                                }
+
+                                // Check if the document exists and contains the 'Point' field
+                                if (snapshot.hasData &&
+                                    snapshot.data!.exists &&
+                                    snapshot.data!
+                                        .data()!
+                                        .containsKey('Point')) {
+                                  double pointValueDouble =
+                                      snapshot.data!.data()!['Point'];
+                                  int pointValue = pointValueDouble.toInt();
+
+                                  return Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        pointValue.toString(),
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 60,
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color.fromARGB(
+                                              255, 20, 20, 20),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                // Handle the case when the document doesn't exist or doesn't contain the 'Point' field
+                                return Center(
+                                  child: Text('Point not found'),
+                                );
+                              },
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Row(
+                              children: List.generate(
+                                155 ~/ 5,
+                                (index) => Expanded(
+                                  child: Container(
+                                    color: index % 2 == 0
+                                        ? Colors.transparent
+                                        : Colors.black,
+                                    height: 2,
+                                  ),
                                 ),
-                                borderRadius: BorderRadius.circular(20),
-                                color: Color.fromARGB(179, 252, 119, 42),
-                              ),
-                              child: Icon(
-                                Icons.home,
-                                color: Colors.black,
                               ),
                             ),
-                            SizedBox(width: 10),
                             Container(
-                              height: 40,
-                              width: 2,
-                              color: Colors.black,
-                            ),
-                            SizedBox(width: 10),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Address',
+                              height: 70,
+                              width: MediaQuery.of(context).size.width,
+                              color: Color.fromARGB(255, 140, 203, 255),
+                              child: Center(
+                                child: Text(
+                                  'Your Point',
                                   style: GoogleFonts.poppins(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -1119,85 +956,270 @@ class _ProfilePageState extends State<ProfilePage> {
                                         const Color.fromARGB(255, 20, 20, 20),
                                   ),
                                 ),
-                                SizedBox(height: 5),
-                                userAddresses != null &&
-                                        userAddresses!.isNotEmpty
-                                    ? Text(
-                                        userAddresses!.values.first?['title'] ??
-                                            'Please add address',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
-                                        ),
-                                      )
-                                    : Text(
-                                        'Please add address',
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w400,
-                                          color: const Color.fromARGB(
-                                              255, 20, 20, 20),
-                                        ),
-                                      )
-                              ],
-                            ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                _showDialogAddAddress();
-                              },
-                              child: Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1.5,
-                                    color: Colors.black,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Icon(
-                                  Icons.add,
-                                  color: Colors.black,
-                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                showAddress();
-                              },
-                              child: Container(
-                                height: 40,
-                                width: 40,
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                    width: 1.5,
-                                    color: Colors.black,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Icon(
-                                  Icons.arrow_forward_ios_rounded,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            ),
-                            SizedBox(
-                              width: 15,
-                            ),
+                            )
                           ],
                         ),
                       ),
-                    )
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Container(
+                      height: 195,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 2, color: Colors.black),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(40),
+                        ),
+                        color: Color.fromARGB(155, 255, 232, 188),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left: 20,
+                          right: 20,
+                          top: 20,
+                        ),
+                        child: Column(
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                if (phoneNumber != null) {
+                                  _showDialogPhoneUpdate();
+                                } else {
+                                  _showDialogAddPhone();
+                                }
+                              },
+                              child: Container(
+                                width: MediaQuery.of(context).size.width,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(width: 2, color: Colors.black),
+                                  borderRadius: BorderRadius.circular(20),
+                                  color: Colors.white,
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color:
+                                              Color.fromARGB(179, 252, 119, 42),
+                                        ),
+                                        child: Icon(
+                                          MdiIcons.phone,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(width: 10),
+                                      Container(
+                                        height: 40,
+                                        width: 2,
+                                        color: Colors.black,
+                                      ),
+                                      SizedBox(width: 10),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Phone Number',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              color: const Color.fromARGB(
+                                                  255, 20, 20, 20),
+                                            ),
+                                          ),
+                                          SizedBox(height: 5),
+                                          Text(
+                                            phoneNumber != null
+                                                ? '$phoneNumber'
+                                                : 'Please add phone number',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w400,
+                                              color: const Color.fromARGB(
+                                                  255, 20, 20, 20),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      Spacer(),
+                                      Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Icon(
+                                          phoneNumber != null
+                                              ? Icons.arrow_forward_ios_rounded
+                                              : Icons.add,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 15,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height: 15,
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                border:
+                                    Border.all(width: 2, color: Colors.black),
+                                borderRadius: BorderRadius.circular(20),
+                                color: Colors.white,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      height: 40,
+                                      width: 40,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          width: 1.5,
+                                          color: Colors.black,
+                                        ),
+                                        borderRadius: BorderRadius.circular(20),
+                                        color:
+                                            Color.fromARGB(179, 252, 119, 42),
+                                      ),
+                                      child: Icon(
+                                        Icons.home,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    SizedBox(width: 10),
+                                    Container(
+                                      height: 40,
+                                      width: 2,
+                                      color: Colors.black,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Address',
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            color: const Color.fromARGB(
+                                                255, 20, 20, 20),
+                                          ),
+                                        ),
+                                        SizedBox(height: 5),
+                                        userAddresses != null &&
+                                                userAddresses!.isNotEmpty
+                                            ? Text(
+                                                userAddresses!.values
+                                                        .first?['title'] ??
+                                                    'Please add address',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              )
+                                            : Text(
+                                                'Please add address',
+                                                style: GoogleFonts.poppins(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: const Color.fromARGB(
+                                                      255, 20, 20, 20),
+                                                ),
+                                              )
+                                      ],
+                                    ),
+                                    Spacer(),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showDialogAddAddress();
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Icon(
+                                          Icons.add,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        showAddress();
+                                      },
+                                      child: Container(
+                                        height: 40,
+                                        width: 40,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            width: 1.5,
+                                            color: Colors.black,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Icon(
+                                          Icons.arrow_forward_ios_rounded,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 15,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -137,7 +138,7 @@ class _LogInState extends State<LogIn> {
     }
   }
 
-  //LogIn with google
+  // LogIn with Google
   Future<void> _LogInWithGoogle() async {
     final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
@@ -151,11 +152,38 @@ class _LogInState extends State<LogIn> {
     final UserCredential authResult =
         await _auth.signInWithCredential(credential);
     final User? user = authResult.user;
+
     if (user != null) {
+      final DocumentSnapshot snapshot = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+      final Map<String, dynamic>? userData =
+          snapshot.data() as Map<String, dynamic>?;
+      if (!snapshot.exists || userData == null || userData['Point'] == null) {
+        // Show Snackbar and prevent login
+        Get.snackbar(
+          'Signup Required',
+          'Please sign up to access the app features.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Color.fromARGB(244, 249, 135, 127),
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+          margin: EdgeInsets.all(10),
+          borderRadius: 10,
+          borderColor: Colors.black,
+          borderWidth: 1.5,
+        );
+
+        // Sign out the user
+        await _auth.signOut();
+
+        return;
+      }
       Get.offAll(HomePage());
       Get.snackbar(
         'Success',
-        'Success to LogIn with google',
+        'Successfully logged in with Google.',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Color.fromARGB(240, 126, 186, 148),
         colorText: Colors.white,
@@ -310,6 +338,7 @@ class _LogInState extends State<LogIn> {
                     //LogIn with google
                     GestureDetector(
                       onTap: () {
+                        Get.back();
                         _LogInWithGoogle();
                       },
                       child: Container(

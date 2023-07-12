@@ -208,12 +208,14 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
   Widget _buildResultView() {
     var title = '';
     var isRecyclable = false;
+    var isOrganic = false;
 
     if (_resultStatus == _ResultStatus.notFound) {
       title = 'Fail to recognize';
     } else if (_resultStatus == _ResultStatus.found) {
       title = _imageLabel;
       isRecyclable = _isRecyclableLabel(_imageLabel);
+      isOrganic = _imageLabel == 'Organic';
     } else {
       title = 'No result yet';
     }
@@ -225,26 +227,25 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
       accuracyLabel = 'No result yet';
     }
 
+    var resultText = '';
+    if (isRecyclable) {
+      resultText = 'Recyclable';
+    } else if (!isRecyclable && !isOrganic) {
+      resultText = 'Non Recyclable';
+    } else if (isOrganic) {
+      resultText = 'Organic Trash';
+    }
+
     return Column(
       children: [
-        if (_resultStatus == _ResultStatus.found)
-          Text(
-            isRecyclable ? 'Recyclable' : 'Non Recyclable',
-            style: GoogleFonts.poppins(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 20, 20, 20),
-            ),
-          )
-        else
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 25,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 20, 20, 20),
-            ),
+        Text(
+          resultText,
+          style: GoogleFonts.poppins(
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 20, 20, 20),
           ),
+        ),
         const SizedBox(height: 10),
         Text(
           accuracyLabel,
@@ -263,7 +264,7 @@ class _ImageRecogniserState extends State<ImageRecogniser> {
       'Plastic',
       'Paper',
       'Metal',
-      'Cardboard'
+      'CardBoard'
     ];
     return recyclableLabels.contains(label);
   }

@@ -74,19 +74,19 @@ class _DiscoverPageState extends State<DiscoverPage> {
                   },
                   children: [
                     buildDiscoverSection(
-                      'assets/image/hero.png',
-                      'Discover 1',
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue vitae ex ultricies vehicula.',
+                      'assets/image/3.png',
+                      'Scan Trash',
+                      'Image classification technology to scan your trash and instantly determine whether it can be recycled or not.',
                     ),
                     buildDiscoverSection(
-                      'assets/image/hero.png',
-                      'Discover 2',
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue vitae ex ultricies vehicula.',
+                      'assets/image/1.png',
+                      'Marketplace',
+                      'Explore our vibrant marketplace filled with eco-friendly products made from recycled materials.',
                     ),
                     buildDiscoverSection(
-                      'assets/image/hero.png',
-                      'Discover 3',
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec eget augue vitae ex ultricies vehicula.',
+                      'assets/image/2.png',
+                      'Books',
+                      'Unlock your creativity and learn innovative ways to repurpose recyclable trash with our extensive collection of tutorial books.',
                     ),
                   ],
                 ),
@@ -215,11 +215,11 @@ class _DiscoverPageState extends State<DiscoverPage> {
             height: 390,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
-              color: Color.fromARGB(211, 184, 182, 251),
+              color: Color.fromARGB(210, 129, 127, 189),
               border: Border.all(width: 1.5),
             ),
             child: Padding(
-              padding: const EdgeInsets.all(20.0),
+              padding: const EdgeInsets.all(15.0),
               child: Container(
                 decoration: BoxDecoration(
                   image: DecorationImage(

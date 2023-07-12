@@ -316,6 +316,7 @@ class _SignUpState extends State<SignUp> {
                     //signup with google
                     GestureDetector(
                       onTap: () {
+                        Get.back();
                         _signUpWithGoogle();
                       },
                       child: Container(

@@ -38,9 +38,9 @@ class _BookPageState extends State<BookPage> {
                   Container(
                     margin: const EdgeInsets.only(right: 50),
                     child: Text(
-                      "DIY Recycle-able Trash",
+                      "DIY Recyclable Trash",
                       style: GoogleFonts.poppins(
-                        fontSize: 37,
+                        fontSize: 35,
                         fontWeight: FontWeight.bold,
                         color: Color.fromARGB(255, 42, 41, 41),
                       ),
@@ -283,7 +283,7 @@ class _BookPageState extends State<BookPage> {
                                         crossAxisCount: 2,
                                         crossAxisSpacing: 15,
                                         mainAxisSpacing: 15,
-                                        childAspectRatio: 0.65,
+                                        mainAxisExtent: 270,
                                       ),
                                       itemCount: remainingData.length,
                                       itemBuilder: (context, index) {
@@ -340,13 +340,16 @@ class _BookPageState extends State<BookPage> {
                                                     ),
                                                   ),
                                                   const SizedBox(height: 15),
-                                                  Text(
-                                                    title,
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 15,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black,
+                                                  Flexible(
+                                                    child: Text(
+                                                      title,
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                        fontSize: 13,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        color: Colors.black,
+                                                      ),
                                                     ),
                                                   ),
                                                 ],

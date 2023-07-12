@@ -374,19 +374,20 @@ class ProductContainer extends StatelessWidget {
               Text(
                 productName,
                 style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
                   color: const Color.fromARGB(255, 20, 20, 20),
                 ),
                 textAlign: TextAlign.left,
               ),
+              SizedBox(height: 5),
               Flexible(
                 child: Text(
                   description,
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: GoogleFonts.poppins(
-                    fontSize: 15,
+                    fontSize: 14,
                     color: const Color.fromARGB(255, 20, 20, 20),
                   ),
                 ),

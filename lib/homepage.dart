@@ -263,30 +263,34 @@ class _HomePageLayoutState extends State<HomePageLayout> {
             const SizedBox(
               height: 30,
             ),
-            Text(
-              'Hi, ${FirebaseAuth.instance.currentUser?.displayName ?? ""}',
-              style: GoogleFonts.poppins(
-                fontSize: 25,
-                fontWeight: FontWeight.w500,
-                color: const Color.fromARGB(255, 20, 20, 20),
-              ),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
             Expanded(
-              child: Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    width: 1.5,
-                    color: Colors.black,
+              child: SingleChildScrollView(
+                child: Column(children: [
+                  Text(
+                    'Hi, ${FirebaseAuth.instance.currentUser?.displayName ?? ""}',
+                    style: GoogleFonts.poppins(
+                      fontSize: 25,
+                      fontWeight: FontWeight.w500,
+                      color: const Color.fromARGB(255, 20, 20, 20),
+                    ),
                   ),
-                  color: Colors.white,
-                ),
-                child: ImageRecogniser(),
+                  const SizedBox(
+                    height: 30,
+                  ),
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.65,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Colors.black,
+                      ),
+                      color: Colors.white,
+                    ),
+                    child: ImageRecogniser(),
+                  )
+                ]),
               ),
             )
           ],
